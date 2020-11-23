@@ -6,10 +6,11 @@ export default class Controller {
 
     private _model: Model;
     private _view: View;
-    private _moveLeft: boolean = false;
-    private _moveRight: boolean = false;
-    private _ballOnPlatform: boolean = true;
-    private _inGame = false;
+    private _moveLeft: boolean = false; // прапору руху ліворуч
+    private _moveRight: boolean = false; //прапор руху праворуч
+    private _ballOnPlatform: boolean = true; // прапор розташування м'яча на платформі
+    private _inGame: boolean = false; //прапор стану гри
+    private isPlay: boolean = false; //прапор гри якщо граємо
 
     constructor(model: Model, view: View) {
         this._model = model;
@@ -17,7 +18,6 @@ export default class Controller {
 
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         document.addEventListener('keyup', this.handKeyUp.bind(this));
-
         this.startTimer();
     }
     //оновлення поля
@@ -27,14 +27,32 @@ export default class Controller {
     }
 
     private update(delta: object):void {
-        this.updateView();
-        this.moveElements();
-        this._model.clearBlock();
-        this._model.jumpInPlatform();
-        this._model.checkBounds();
-        TWEEN.update();
-    }
+        if (this._inGame) {
+            this.isPlay = true;
+            this.updateView(); //оновлюємо поле
+            this.moveElements(); //рухаємо елементи
+            this._model.clearBlock(); //очищаємо знищені блоки
+            this._model.jumpInPlatform(); //відштовхуємо м'яч від платформи
+            this._model.checkBounds(); //перевіряємо межі
+            TWEEN.update();
+            this._view.deleteStartScreen();
+        } else if(!this._inGame && !this.isPlay) {
+            this._view.renderStartScreen();
+        }
 
+        if (this.isPlay && !this._inGame) {
+            this._view.renderPauseScreen();
+        } else {
+                this._view.deletePauseScreen();
+        }
+
+        if (this._model.getState().GameOver) {
+            this._view.renderEndScreen();
+            this._view.app.ticker.stop();
+            this._inGame = false;
+        }
+    }
+    //рух елементів гри
     private moveElements(): void {
         //рух платформи ліворуч / праворуч
         if (this._moveLeft) {
@@ -48,10 +66,14 @@ export default class Controller {
         } else if (this._ballOnPlatform && this._moveRight) {
             this._model.moveBallInPlatformRight();
         }
-
-        if (this._ballOnPlatform === false) {
+        if (!this._ballOnPlatform ) {
             this._model.realiseBall();
         }
+    }
+
+    private restart(): void {
+        this._view.deleteEndScreen();
+        this._model.reset();
     }
 
     private startTimer(): void {
@@ -65,7 +87,7 @@ export default class Controller {
                 this._ballOnPlatform = false;
                 break;
             case 'Enter':
-
+                this._inGame = !this._inGame;
                 break;
             case 'ArrowLeft':
                 this._moveLeft = true;

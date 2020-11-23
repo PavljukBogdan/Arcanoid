@@ -7,6 +7,7 @@ export type TGameState = {
     blocks: PIXI.Sprite[];
     blockRemove: PIXI.Sprite[];
     score: number;
+    GameOver: boolean;
 };
 
 export default class Model {
@@ -20,9 +21,10 @@ export default class Model {
     private _velocityBallX = this._velocityBall;
     private _velocityBallY = this._velocityBall;
     private _score: number = 0; // рахунок
+    private GameOver: boolean = false;
 
     constructor() {
-        this.createGameField();
+        this.reset();
     }
     // отримуємо статус гри
     public getState(): TGameState {
@@ -31,8 +33,13 @@ export default class Model {
            balls: this._balls,
            blocks: this._blocks,
             blockRemove: this._blockRemove,
-            score: this._score
+            score: this._score,
+            GameOver: this.GameOver
         }
+    }
+    public reset(): void {
+        this.createGameField();
+        this._score = 0;
     }
     // створюємо ігрове поле
     private createGameField(): void {
@@ -47,7 +54,7 @@ export default class Model {
         for (let y = 0; y < 4; y++) {
             let blockX = 25;
             for (let x = 0; x < 10; x++) {
-                this._blocks.push(this.createBlockGame('./assets/Box.png',blockX,blockY,33,50, 'block_'+ x + '_' + y));
+                this._blocks.push(this.createBlockGame('./assets/Box.png',blockX,blockY,30,50, 'block_'+ x + '_' + y));
                 blockX += 50;
             }
             blockY += 35;
@@ -85,7 +92,7 @@ export default class Model {
         const ball = this._balls[0];
         ball.x += this._velocityPlatform;
     }
-
+    //рух м'яча
     public realiseBall(): void {
         const ball = this._balls[0];
         ball.x -= this._velocityBallX;
@@ -107,9 +114,7 @@ export default class Model {
             }
         }
     }
-
-
-
+    //стрибок від платформи
     public jumpInPlatform(): void {
         if (this.hasCollision(this._balls[0], this._platforms[0])) {
             if (this.leftSidePlatform(this._balls[0], this._platforms[0])) {
@@ -120,7 +125,7 @@ export default class Model {
             }
         }
     }
-
+    //перевірка на колізії
     private hasCollision(ball: PIXI.Sprite, block: PIXI.Sprite): boolean {
 
         const bounds1 = ball.getBounds();
@@ -131,10 +136,9 @@ export default class Model {
             && bounds1.y < bounds2.y + bounds2.height
             && bounds1.y + bounds1.height > bounds2.y;
     }
-
-    public checkBounds(): boolean {
+    //перевірка виходу за межі поля
+    public checkBounds(): void {
         const ball = this._balls[0];
-
         if (ball.x < 0) {
             this.bumpBlockX();
         } else if (ball.x + ball.width > 550) {
@@ -142,19 +146,18 @@ export default class Model {
         } else if (ball.y < 0) {
             this.bumpBlockY();
         } else if (ball.y + ball.height > 560) {
-            //game over
+            this.GameOver = true;
         }
-        return false
     }
-
+    //зміна напрямку по х
     private bumpBlockX(): void {
         this._velocityBallX *= -1;
     }
-
+    //зміна напрямку по у
     private bumpBlockY(): void {
         this._velocityBallY *= -1;
     }
-
+    //яка сторона відбила м'яч
     private leftSidePlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): boolean {
         return (ball.x + ball.width / 2) < (platform.x + platform.width / 2);
     }

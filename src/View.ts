@@ -10,7 +10,10 @@ export default class View {
     private readonly _width: number; //ширина ігрового поля
     private readonly _height: number; //висота ігрового поля
     public app: PIXI.Application; //полотно
-    private _textScore: PIXI.Text;
+    private _textScore: PIXI.Text; // текст з рахунком
+    private _startText: PIXI.Text; // текст стартового екрану
+    private _pauseText: PIXI.Text; // текст паузи
+    private _endText: PIXI.Text; //текст закінчення гри
 
 
     constructor(element: Element | null, width: number, height: number, model: Model) {
@@ -31,16 +34,43 @@ export default class View {
         });
         document.body.appendChild(this.app.view);//додаємо полотно, яке створили
         this.createPanel();
+        this.renderTextScreen();
+    }
+    //малюємо екран закінчення
+    public renderEndScreen(): void {
+        this.app.stage.addChild(this._endText);
+    }
+    //видаляємо екран закінчення
+    public deleteEndScreen(): void {
+        this.app.stage.removeChild(this._endText);
+    }
+    //малюємо текст гри
+    private renderTextScreen(): void {
         this.app.stage.addChild(this._textScore);
-
     }
-
+    //малюємо екран гри
     public renderMainScreen(state) {
-        this.renderPlayField(state);
+        this.renderPlayField(state); //малюємо ігрове поле
         let score: string= this._model.getState().score.toString();
-        this._textScore.text = score;
+        this._textScore.text = `score ` + score;
     }
-
+    //малюємо стартовий напис
+    public renderStartScreen(): void {
+        this.app.stage.addChild(this._startText);
+    }
+    //видаляємо стартовий напис
+    public deleteStartScreen(): void {
+        this.app.stage.removeChild(this._startText);
+    }
+    //малюємо напис паузи
+    public renderPauseScreen(): void {
+        this.app.stage.addChild(this._pauseText);
+    }
+    //видаляємо напис паузи
+    public deletePauseScreen(): void {
+        this.app.stage.removeChild(this._pauseText);
+    }
+    //створюємо текстові панелі
     private createPanel(): void {
         const style = new PIXI.TextStyle({
             fill: "#212121",
@@ -48,8 +78,18 @@ export default class View {
             stroke: "#fafafa",
             strokeThickness: 5
         });
+        this._textScore = new PIXI.Text('score 0',style);
+        this._startText = new PIXI.Text('Press Enter to start',style);
+        this._startText.x = 120;
+        this._startText.y = 250;
 
-        this._textScore = new PIXI.Text('0',style);
+        this._pauseText = new PIXI.Text('Press Enter to continue',style);
+        this._pauseText.x = 120;
+        this._pauseText.y = 250;
+
+        this._endText = new PIXI.Text('Press Enter to restart',style);
+        this._endText.x = 120;
+        this._endText.y = 250;
     }
     //малюємо ігрове поле
     private renderPlayField({platforms, balls, blocks, blockRemove}) {
