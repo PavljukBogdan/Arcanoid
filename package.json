@@ -1,0 +1,30 @@
+{
+  "name": "Arcanoid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-serv": "webpack-dev-server --mode=development",
+    "webpack watch": "webpack --watch",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^8.0.11",
+    "typescript": "^4.0.5",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.11.0",
+    "clean-webpack-plugin": "3.0.0",
+    "copy-webpack-plugin": "6.3.2",
+    "html-webpack-plugin": "^4.5.0"
+  },
+  "dependencies": {
+    "@tweenjs/tween.js": "^18.6.4",
+    "es6-tween": "^5.5.11",
+    "pixi.js": "^5.3.3",
+    "tweenjs": "^1.0.2"
+  }
+}
