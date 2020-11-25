@@ -22,72 +22,80 @@ export default class Controller {
     }
     //оновлення поля
     private updateView(): void {
-        const state = this._model.getState();
-        this._view.renderMainScreen(state);
+        this._view.renderMainScreen();
     }
 
     private update(delta: object):void {
+        const state = this._view.getSprite();
+        TWEEN.update();
         if (this._inGame) {
             this.isPlay = true;
             this.updateView(); //оновлюємо поле
             this.moveElements(); //рухаємо елементи
-            this._model.clearBlock(); //очищаємо знищені блоки
-            this._model.jumpInPlatform(); //відштовхуємо м'яч від платформи
-            this._model.checkBounds(); //перевіряємо межі
-            TWEEN.update();
+            this._model.clearBlock(state); //очищаємо знищені блоки
+            this._model.jumpInPlatform(state); //відштовхуємо м'яч від платформи
+            this._model.checkBounds(state); //перевіряємо межі
             this._view.deleteStartScreen();
-        } else if(!this._inGame && !this.isPlay) {
-            this._view.renderStartScreen();
         }
-
-        if (this.isPlay && !this._inGame) {
-            this._view.renderPauseScreen();
-        } else {
-                this._view.deletePauseScreen();
-        }
-
         if (this._model.getState().GameOver) {
             this._view.renderEndScreen();
-            this._view.app.ticker.stop();
-            this._inGame = false;
         }
     }
+
     //рух елементів гри
     private moveElements(): void {
+        const state = this._view.getSprite();
         //рух платформи ліворуч / праворуч
         if (this._moveLeft) {
-            this._model.movePlatformLeft();
+            this._model.movePlatformLeft(state.platforms[0]);
         } else if (this._moveRight) {
-            this._model.movePlatformRight();
+            this._model.movePlatformRight(state.platforms[0]);
         }
         //рух м'яча з платформою ліворуч / праворуч
         if (this._ballOnPlatform && this._moveLeft) {
-            this._model.moveBallInPlatformLeft();
+            this._model.moveBallInPlatformLeft(state.balls[0]);
         } else if (this._ballOnPlatform && this._moveRight) {
-            this._model.moveBallInPlatformRight();
+            this._model.moveBallInPlatformRight(state.balls[0]);
         }
         if (!this._ballOnPlatform ) {
-            this._model.realiseBall();
+            this._model.realiseBall(state.balls[0]);
         }
     }
 
     private restart(): void {
+        this._ballOnPlatform = true;
         this._view.deleteEndScreen();
         this._model.reset();
+        this._view.reset();
     }
 
     private startTimer(): void {
         this._view.app.ticker.add(delta => this.update(delta));
     }
+    //виводимо екран паузи
+    private updatePauseScreen(): void {
+        if (this.isPlay && !this._inGame) {
+            this._view.renderPauseScreen();
+        } else {
+            this._view.deletePauseScreen();
+        }
+    }
     //слідкуємо за натисканням клавіш
     private handleKeyDown(e: KeyboardEvent): void {
-        console.log(e.key);
+
         switch (e.key) {
             case 'ArrowUp':
                 this._ballOnPlatform = false;
                 break;
             case 'Enter':
                 this._inGame = !this._inGame;
+                if (!this._model.getState().GameOver) {
+                    this.updatePauseScreen();
+                } else {
+                    this.restart();
+                    //this._view.app.ticker.stop();
+                    this._inGame = true;
+                }
                 break;
             case 'ArrowLeft':
                 this._moveLeft = true;
