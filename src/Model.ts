@@ -1,23 +1,24 @@
 import * as PIXI from 'pixi.js'
-import * as TWEEN from '@tweenjs/tween.js'
+import {ColorBlock} from './ColorBlock'
 
 export type TGameState = {
     score: number;
     GameOver: boolean;
     playField: number[][];
     blockRemove: PIXI.Sprite[];
+    levelGame: number;
 };
 
 export default class Model {
 
     private _velocityPlatform = 10; //максимальна швидкісь переміщення платформи
-    private _velocityBall = 4; //максимальна швидкість м'яча
+    private _velocityBall = 3; //максимальна швидкість м'яча
     private _velocityBallX = this._velocityBall;
     private _velocityBallY = this._velocityBall;
     private _score: number = 0; // рахунок
     private _gameOver: boolean = false;
     private _playField: number[][] = []; //ігрове поле
-    private _levelGame: number = 1;
+    private _levelGame: number = 2;
     private _blockRemove: PIXI.Sprite[] = [];
 
     constructor() {
@@ -29,7 +30,8 @@ export default class Model {
             score: this._score,
             GameOver: this._gameOver,
             playField:this._playField,
-            blockRemove: this._blockRemove
+            blockRemove: this._blockRemove,
+            levelGame: this._levelGame
         }
     }
     public reset(): void {
@@ -46,7 +48,7 @@ export default class Model {
                 this._playField = this.createLevelOne();
                 break;
             case 2:
-                this._playField = this.createLevelOne();
+                this._playField = this.createLevelTwo();
                 break;
             case 3:
                 this._playField = this.createLevelOne();
@@ -61,7 +63,15 @@ export default class Model {
     private createLevelOne(): number[][] {
         const playField: number[][] = [];
         for (let y = 0; y < 4; y++) {
-            playField[y] = new Array(10).fill(1);
+            playField[y] = new Array(10).fill(0);
+        }
+        return playField;
+    }
+
+    private createLevelTwo(): number[][] {
+        const playField: number[][] = [];
+        for (let y = 0; y < 4; y++) {
+            playField[y] = new Array(10).fill(y);
         }
         return playField;
     }
@@ -75,7 +85,7 @@ export default class Model {
     }
 
     public moveBallInPlatformLeft(ball: PIXI.Sprite): void {
-        ball.x -= this._velocityPlatform;
+            ball.x -= this._velocityPlatform;
     }
 
     public moveBallInPlatformRight(ball: PIXI.Sprite): void {
@@ -84,19 +94,44 @@ export default class Model {
     //рух м'яча
     public realiseBall(ball: PIXI.Sprite): void {
         ball.x -= this._velocityBallX;
-        ball.y -= this._velocityBallY;
+       //ball.y -= this._velocityBallY;
+        ball.y -= this._velocityBallY / 0.5;
     }
     //видаляємо блоки що вибили
     public clearBlock({balls, blocks}): void {
-
         for (let i = 0; i < blocks.length; i ++) {
             if (this.hasCollision(balls[0], blocks[i])) { //якщо м'яч доторкнувся до блока
                 this.bumpBlockY(); //змінюємо координату м'яча
+                let words = blocks[i].name.split('_');
+                let name = words[0];
+                this._score += this.scoresGame(name); //змінюємо рахунок
+                console.log(this.scoresGame(name))
                 this._blockRemove.push(blocks[i]); //додаємо блок в масив
                 blocks.splice(i,1); //видаляємо блок з поля
-                this._score += 10; //змінюємо рахунок
             }
         }
+    }
+
+    private scoresGame(elements: string): number {
+        let score: number;
+        switch (elements) {
+            case 'Green':
+                score = 10;
+                break;
+            case 'Blue':
+                score = 20;
+                break;
+            case 'Yellow':
+                score = 30;
+                break;
+            case 'Pink':
+                score = 40
+                break;
+            case 'Violet':
+                score = 50
+                break;
+        }
+        return score;
     }
     //стрибок від платформи
     public jumpInPlatform({balls, platforms}): void {
@@ -127,10 +162,24 @@ export default class Model {
             this.bumpBlockX();
         } else if (ball.x + ball.width > 550) {
             this.bumpBlockX();
-        } else if (ball.y < 0) {
+        } else if (ball.y < 100) {
             this.bumpBlockY();
-        } else if (ball.y + ball.height > 560) {
-            this._gameOver = true;
+        } else if (ball.y + ball.height > 660) {
+                this._gameOver = true;
+        }
+    }
+    //перевірка виходу за межі екрану платформи
+    public checkBoundsPlatform({balls, platforms}, ballInPlatform: boolean){
+        const platform = platforms[0];
+        const ball = balls[0];
+        if (platform.x < 0) {
+            this.moveBallInPlatformRight(platform);
+            if (ballInPlatform)
+                this.moveBallInPlatformRight(ball);
+        } else if (platform.x + platform.width > 550) {
+            this.moveBallInPlatformLeft(platform);
+            if (ballInPlatform)
+                this.moveBallInPlatformLeft(ball);
         }
     }
     //зміна напрямку по х

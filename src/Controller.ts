@@ -10,7 +10,7 @@ export default class Controller {
     private _moveRight: boolean = false; //прапор руху праворуч
     private _ballOnPlatform: boolean = true; // прапор розташування м'яча на платформі
     private _inGame: boolean = false; //прапор стану гри
-    private isPlay: boolean = false; //прапор гри якщо граємо
+    private _isPlay: boolean = false; //прапор гри якщо граємо
 
     constructor(model: Model, view: View) {
         this._model = model;
@@ -29,17 +29,18 @@ export default class Controller {
         const state = this._view.getSprite();
         TWEEN.update();
         if (this._inGame) {
-            this.isPlay = true;
+            this._isPlay = true;
             this.updateView(); //оновлюємо поле
             this.moveElements(); //рухаємо елементи
             this._model.clearBlock(state); //очищаємо знищені блоки
             this._model.jumpInPlatform(state); //відштовхуємо м'яч від платформи
             this._model.checkBounds(state); //перевіряємо межі
+            this._model.checkBoundsPlatform(state,this._ballOnPlatform);
             this._view.deleteStartScreen();
         }
         if (this._model.getState().GameOver) {
             this._view.renderEndScreen();
-        }
+            }
     }
 
     //рух елементів гри
@@ -62,6 +63,7 @@ export default class Controller {
         }
     }
 
+
     private restart(): void {
         this._ballOnPlatform = true;
         this._view.deleteEndScreen();
@@ -74,7 +76,7 @@ export default class Controller {
     }
     //виводимо екран паузи
     private updatePauseScreen(): void {
-        if (this.isPlay && !this._inGame) {
+        if (this._isPlay && !this._inGame) {
             this._view.renderPauseScreen();
         } else {
             this._view.deletePauseScreen();
@@ -93,14 +95,15 @@ export default class Controller {
                     this.updatePauseScreen();
                 } else {
                     this.restart();
-                    //this._view.app.ticker.stop();
                     this._inGame = true;
                 }
                 break;
             case 'ArrowLeft':
+                if (!this._model.getState().GameOver)
                 this._moveLeft = true;
                 break;
             case 'ArrowRight':
+                if (!this._model.getState().GameOver)
                 this._moveRight = true;
                 break;
         }
