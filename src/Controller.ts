@@ -37,10 +37,15 @@ export default class Controller {
             this._model.checkBounds(state); //перевіряємо межі
             this._model.checkBoundsPlatform(state,this._ballOnPlatform);
             this._view.deleteStartScreen();
+            this._model.levelApp();
         }
         if (this._model.getState().GameOver) {
             this._view.renderEndScreen();
             }
+        if (this._model.getState().levelPassed) {
+            this._view.renderNextLevelScreen();
+            this._inGame = false;
+        }
     }
 
     //рух елементів гри
@@ -94,6 +99,10 @@ export default class Controller {
                 if (!this._model.getState().GameOver) {
                     this.updatePauseScreen();
                 } else {
+                    this.restart();
+                    this._inGame = true;
+                }
+                if (this._model.getState().levelPassed) {
                     this.restart();
                     this._inGame = true;
                 }

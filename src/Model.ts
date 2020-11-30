@@ -7,7 +7,15 @@ export type TGameState = {
     playField: number[][];
     blockRemove: PIXI.Sprite[];
     levelGame: number;
+    scoreText: TScoreText[];
+    levelPassed: boolean;
 };
+
+export type TScoreText = {
+    score: number;
+    x: number;
+    y: number;
+}
 
 export default class Model {
 
@@ -18,8 +26,11 @@ export default class Model {
     private _score: number = 0; // рахунок
     private _gameOver: boolean = false;
     private _playField: number[][] = []; //ігрове поле
-    private _levelGame: number = 2;
-    private _blockRemove: PIXI.Sprite[] = [];
+    private _levelGame: number = 1;
+    private _blockRemove: PIXI.Sprite[] = [];//масив блоків для видалення
+    private _scoreText: TScoreText[] = [];
+    private _numbersOfBlocksInLevels: number = 0;
+    private _levelPassed = false;
 
     constructor() {
         this.reset();
@@ -31,7 +42,9 @@ export default class Model {
             GameOver: this._gameOver,
             playField:this._playField,
             blockRemove: this._blockRemove,
-            levelGame: this._levelGame
+            levelGame: this._levelGame,
+            scoreText: this._scoreText,
+            levelPassed: this._levelPassed
         }
     }
     public reset(): void {
@@ -39,6 +52,7 @@ export default class Model {
         this._score = 0;
         this._blockRemove = [];
         this.createGameField();
+        this._levelPassed = false;
     }
     // створюємо ігрове поле
     private createGameField(): number[][] {
@@ -62,8 +76,10 @@ export default class Model {
     // створюємо перший рівень
     private createLevelOne(): number[][] {
         const playField: number[][] = [];
+
         for (let y = 0; y < 4; y++) {
             playField[y] = new Array(10).fill(0);
+            this._numbersOfBlocksInLevels = playField[y].length;
         }
         return playField;
     }
@@ -72,6 +88,7 @@ export default class Model {
         const playField: number[][] = [];
         for (let y = 0; y < 4; y++) {
             playField[y] = new Array(10).fill(y);
+            this._numbersOfBlocksInLevels = playField[y].length;
         }
         return playField;
     }
@@ -105,9 +122,16 @@ export default class Model {
                 let words = blocks[i].name.split('_');
                 let name = words[0];
                 this._score += this.scoresGame(name); //змінюємо рахунок
-                console.log(this.scoresGame(name))
                 this._blockRemove.push(blocks[i]); //додаємо блок в масив
+                let sT: TScoreText = {
+                    score: this.scoresGame(name),
+                    x: blocks[i].x,
+                    y: blocks[i].y
+                };
+                this._scoreText.push(sT);
                 blocks.splice(i,1); //видаляємо блок з поля
+                console.log('bR ' + this._blockRemove.length);
+                console.log('n' + this._numbersOfBlocksInLevels);
             }
         }
     }
@@ -195,6 +219,13 @@ export default class Model {
         return (ball.x + ball.width / 2) < (platform.x + platform.width / 2);
     }
 
+    public levelApp(): void {
+        if (this._numbersOfBlocksInLevels == this._blockRemove.length) {
+            this._levelPassed = true;
+            this._levelGame ++;
+            this._numbersOfBlocksInLevels = 0;
+        }
+    }
     private updateScore(): void {
 
     }
