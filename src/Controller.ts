@@ -26,19 +26,22 @@ export default class Controller {
     }
 
     private update(delta: object):void {
-        const state = this._view.getSprite();
+        const stateView = this._view.getSprite();
+        const stateModel = this._model.getState();
         TWEEN.update();
         if (this._inGame) {
             this._isPlay = true;
             this.updateView(); //оновлюємо поле
-            this.moveElements(); //рухаємо елементи
-            this._model.clearBlock(state); //очищаємо знищені блоки
-            this._model.jumpInPlatform(state); //відштовхуємо м'яч від платформи
-            this._model.checkBounds(state); //перевіряємо межі
-            this._model.checkBoundsPlatform(state,this._ballOnPlatform);
+            this.moveElements(stateModel); //рухаємо елементи
+            this._model.clearBlock(stateView); //очищаємо знищені блоки
+            this._model.jumpInPlatform(stateView); //відштовхуємо м'яч від платформи
+            this._model.checkBounds(stateView); //перевіряємо межі
+            this._model.checkBoundsPlatform(stateView,this._ballOnPlatform);
             this._view.deleteStartScreen();
+            this._model.moveBonuses(stateView);
+            this._model.catchBonus(stateView);
             this._model.levelApp();
-            this.followBonus(state);
+            this._view.widthPlatform(stateModel);
         }
         if (this._model.getState().GameOver) {
             this._view.renderEndScreen();
@@ -49,7 +52,7 @@ export default class Controller {
         }
     }
     //рух елементів гри
-    private moveElements(): void {
+    private moveElements({speedOn}): void {
         const state = this._view.getSprite();
         //рух платформи ліворуч / праворуч
         if (this._moveLeft) {
@@ -64,11 +67,7 @@ export default class Controller {
             this._model.moveBallInPlatformRight(state.balls[0]);
         }
         if (!this._ballOnPlatform ) {
-            this._model.realiseBall(state.balls[0]);
-        }
-        let bonuses: PIXI.Sprite[] = this._view.getSprite().bonuses;
-        for (let i = 0; i < bonuses.length; i++) {
-            this._model.gravityBonuses(bonuses[i]);
+            this._model.realiseBall(state.balls[0],speedOn);
         }
     }
     private restart(): void {
@@ -80,12 +79,6 @@ export default class Controller {
 
     private startTimer(): void {
         this._view.app.ticker.add(delta => this.update(delta));
-    }
-    private followBonus(state): void {
-
-        this._view.createBonusBlock(this._model.getBonusField());
-        this._model.catchBonus(state);
-        //this._view.removeBonusBlock();
     }
     //виводимо екран паузи
     private updatePauseScreen(): void {

@@ -2,13 +2,14 @@ import * as PIXI from 'pixi.js'
 import Model from "./Model"
 import * as TWEEN from '@tweenjs/tween.js'
 import {ColorBlock} from './ColorBlock'
-import {TPixiObject} from "./Model"
+import {Bonus} from './ColorBlock'
 
 export type TGameSprite = {
     platforms: PIXI.Sprite[];
     balls: PIXI.Sprite[];
     blocks: PIXI.Sprite[];
     bonuses: PIXI.Sprite[];
+    nameBonus: string[];
 };
 
 export default class View {
@@ -32,6 +33,7 @@ export default class View {
     private _scoresText: PIXI.Text[] = [];
     private _appGame: PIXI.Sprite;
     private _nextLevelText: PIXI.Text;
+    private _nameBonuses: string [] = [];
 
 
     constructor(element: Element | null, width: number, height: number, model: Model) {
@@ -53,19 +55,20 @@ export default class View {
             platforms: this._platforms,
             balls: this._balls,
             blocks: this._blocks,
-            bonuses: this._blocksBonus
+            bonuses: this._blocksBonus,
+            nameBonus: this._nameBonuses
         }
     }
     //перезапуск
     public reset(): void {
+        let state = this._model.getState();
         this.removeGameElements();
         this._platforms = [];
         this._balls = [];
         this._blocks = [];
         this.deleteMainScreen();
         this.removeGameElements();
-        let playField = this._model.getState().playField;
-        this.createPlayField(playField);
+        this.createPlayField(state);
         this.createPanel();
         this.renderTextScreen();
     }
@@ -77,26 +80,26 @@ export default class View {
         this.renderStartScreen();
     }
     // створюємо текст випадаючого рахунку
-    private createTextScore(scoreText: TPixiObject[]): void {
-        const style = new PIXI.TextStyle({
-            fill: "#212121",
-            fontSize: 20,
-            stroke: "#fafafa",
-            strokeThickness: 2
-        });
-
-        for (let i = this._scoresText.length; i < scoreText.length; i++) {
-            let sT = new PIXI.Text('+'+scoreText[i].score.toString(),style);
-            sT.x = scoreText[i].x;
-            sT.y = scoreText[i].y;
-            sT.name = i.toString();
-            this._scoresText.push(sT);
-            // this._scoresText[i] = new PIXI.Text(scoreText[i].score.toString(),style);
-            // this._scoresText[i].x = scoreText[i].x;
-            // this._scoresText[i].y = scoreText[i].y;
-            // this._scoresText[i].name = i.toString();
-        }
-    }
+    // private createTextScore(scoreText: TPixiObject[]): void {
+    //     const style = new PIXI.TextStyle({
+    //         fill: "#212121",
+    //         fontSize: 20,
+    //         stroke: "#fafafa",
+    //         strokeThickness: 2
+    //     });
+    //
+    //     for (let i = this._scoresText.length; i < scoreText.length; i++) {
+    //         let sT = new PIXI.Text('+'+scoreText[i].score.toString(),style);
+    //         sT.x = scoreText[i].x;
+    //         sT.y = scoreText[i].y;
+    //         sT.name = i.toString();
+    //         this._scoresText.push(sT);
+    //         // this._scoresText[i] = new PIXI.Text(scoreText[i].score.toString(),style);
+    //         // this._scoresText[i].x = scoreText[i].x;
+    //         // this._scoresText[i].y = scoreText[i].y;
+    //         // this._scoresText[i].name = i.toString();
+    //     }
+    // }
     // рухаємо текст випадаючого рахунку
     private moveTextScore(scoresText: PIXI.Text[]): void {
         let sT;
@@ -147,7 +150,7 @@ export default class View {
         }
     }
     //створюємо ігрові об'єкти
-    private createPlayField(playField: number[][]): void {
+    private createPlayField({playField, bonusField}): void {
         this._appGame = this.createBlockGame('./assets/Bg.png', 0,100,560,550,'appGame');
         let blockY = 120;
         for (let y = playField.length - 1; y >= 0; y--) {
@@ -155,29 +158,24 @@ export default class View {
             for (let x = 0; x < playField[y].length; x++) {
                 let color: string = ColorBlock[playField[y][x]];
                 this._blocks.push(this.createBlockGame(`./assets/${color}.png`,blockX,blockY,30,50, `${color}_block_`+ x + '_' + y));
+                //створюємо бонуси
+                for (let j = 0; j < bonusField.length; j++) {
+                    if (x == bonusField[j].x && y == bonusField[j].y) {
+                        let name: string = Bonus[bonusField[j].number];
+                        this._blocksBonus.push(this.createBlockGame(`./assets/${name}.png`,blockX,blockY,30,30,`${name}_bonus_` + x + '_' + y));
+                    }
+                }
                 blockX += 50;
             }
             blockY += 35;
         }
-        this._platforms.push(this.createBlockGame('./assets/Line.png',210,585,14,100, 'platform'));
+        let widthPlatform = this._model.getState().widthPlatform;
+        this._platforms.push(this.createBlockGame('./assets/Line.png',210,585,14,widthPlatform, 'platform'));
         this.createBall();
     }
-    //створюємо бонуси
-    public createBonusBlock(blocks: TPixiObject[]): void {
-        for (let i = this._blocksBonus.length; i < blocks.length; i++) {
-            this._blocksBonus.push(this.createBlockGame('./assets/Line.png',blocks[i].x,blocks[i].y,30,30,'bonus_' + i));
-        }
-    }
-    public removeBonusBlock (): void {
-        let removeBonuses: PIXI.Sprite[] = this._model.getState().removeBonuses;
-        console.log(removeBonuses);
-        let f: PIXI.Sprite[] = this._blocksBonus;
-        for (let i = 0; i < f.length; i++) {
-            this.app.stage.addChild(f[i]);
-        }
-        for (let i = 0; i < removeBonuses.length; i++) {
-            this.app.stage.removeChild(f[i]);
-        }
+
+    public widthPlatform ({widthPlatform}): void {
+        this._platforms[0].width = widthPlatform;
     }
     //створюємо м'ячі
     private createBall(): void {
@@ -315,12 +313,35 @@ export default class View {
             this.app.stage.addChild(this._blocks[i]);
         }
         const blockRemove = this._model.getState().blockRemove;
+        const removeBonuses = this._model.getState().removeBonuses;
+
         if (blockRemove.length > 0) {
             for (let i = 0; i < blockRemove.length; i++) {
                 this.app.stage.removeChild(blockRemove[i]);
+                let wordsRemove = blockRemove[i].name.split('_');
+                for (let j = 0; j < this._blocksBonus.length; j++) {
+                    let wordsBonus = this._blocksBonus[j].name.split('_');
+                        if (wordsRemove[wordsRemove.length - 2] == wordsBonus[wordsBonus.length - 2] &&
+                            wordsRemove[wordsRemove.length - 1] == wordsBonus[wordsBonus.length - 1]) {
+                            this.app.stage.addChild(this._blocksBonus[j]);
+                            this._nameBonuses.push(this._blocksBonus[j].name);
+                        }
+                }
             }
         }
-        this.removeBonusBlock();
+        for (let i = 0; i < removeBonuses.length; i++) {
+            this.app.stage.removeChild(removeBonuses[i]);
+            for (let j = 0; j < this._blocksBonus.length; j++) {
+                if (removeBonuses[i].name == this._blocksBonus[j].name) {
+                    this._blocksBonus.splice(j,1);
+                }
+            }
+        }
+
+
+
+
+        //this.removeBonusBlock();
         // this.createTextScore(this._model.getState().scoreText);
         // this.renderScoreText();
         // if (this._scoresText.length) {
@@ -338,4 +359,5 @@ export default class View {
             this.app.stage.addChild(this._balls[i]);
         }
     }
+
 }

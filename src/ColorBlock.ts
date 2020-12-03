@@ -5,3 +5,10 @@ export enum ColorBlock {
     'Pink',
     'Violet'
 }
+
+export enum Bonus {
+    'short',
+    'long',
+    'speed'
+
+}
