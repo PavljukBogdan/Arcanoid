@@ -2,11 +2,13 @@ import * as PIXI from 'pixi.js'
 import Model from "./Model"
 import * as TWEEN from '@tweenjs/tween.js'
 import {ColorBlock} from './ColorBlock'
-import {TScoreText} from "./Model"
+import {TPixiObject} from "./Model"
+
 export type TGameSprite = {
     platforms: PIXI.Sprite[];
     balls: PIXI.Sprite[];
     blocks: PIXI.Sprite[];
+    bonuses: PIXI.Sprite[];
 };
 
 export default class View {
@@ -16,6 +18,7 @@ export default class View {
     private _platforms: PIXI.Sprite[] = []; //масив платформ
     private _balls: PIXI.Sprite[] = []; // масив м'ячів
     private _blocks: PIXI.Sprite[] = []; // масив блоків
+    private _blocksBonus: PIXI.Sprite[] = [];
      //масив блоків, що видаляються
     private _element: Element | null; //дом. елемент
     private readonly _width: number; //ширина ігрового поля
@@ -50,6 +53,7 @@ export default class View {
             platforms: this._platforms,
             balls: this._balls,
             blocks: this._blocks,
+            bonuses: this._blocksBonus
         }
     }
     //перезапуск
@@ -73,7 +77,7 @@ export default class View {
         this.renderStartScreen();
     }
     // створюємо текст випадаючого рахунку
-    private createTextScore(scoreText: TScoreText[]): void {
+    private createTextScore(scoreText: TPixiObject[]): void {
         const style = new PIXI.TextStyle({
             fill: "#212121",
             fontSize: 20,
@@ -81,8 +85,8 @@ export default class View {
             strokeThickness: 2
         });
 
-        for (let i = 0; i < scoreText.length; i++) {
-            let sT = new PIXI.Text(scoreText[i].score.toString(),style);
+        for (let i = this._scoresText.length; i < scoreText.length; i++) {
+            let sT = new PIXI.Text('+'+scoreText[i].score.toString(),style);
             sT.x = scoreText[i].x;
             sT.y = scoreText[i].y;
             sT.name = i.toString();
@@ -104,7 +108,7 @@ export default class View {
             alpha: 0
         }
         const to = {
-            y: sT.y + 50,
+            y: sT.y - 50,
             alpha: 1
         }
         let tween = new TWEEN.Tween(from)
@@ -117,9 +121,9 @@ export default class View {
             //     tween.stop();
             // }
         });
-        // tween.onComplete(()=> {
-        //     this.removeTextScore(this._scoresText,sT);
-        // });
+        tween.onComplete(()=> {
+            this.removeTextScore(this._scoresText,sT);
+        });
         tween.start();
     }
     //видаляємо текст випадаючого рахунку
@@ -129,7 +133,6 @@ export default class View {
                 this.app.stage.removeChild(scoresText[i]);
             }
         }
-
     }
     //видаляємо ігрові об'єкти
     private removeGameElements(): void {
@@ -159,6 +162,24 @@ export default class View {
         this._platforms.push(this.createBlockGame('./assets/Line.png',210,585,14,100, 'platform'));
         this.createBall();
     }
+    //створюємо бонуси
+    public createBonusBlock(blocks: TPixiObject[]): void {
+        for (let i = this._blocksBonus.length; i < blocks.length; i++) {
+            this._blocksBonus.push(this.createBlockGame('./assets/Line.png',blocks[i].x,blocks[i].y,30,30,'bonus_' + i));
+        }
+    }
+    public removeBonusBlock (): void {
+        let removeBonuses: PIXI.Sprite[] = this._model.getState().removeBonuses;
+        console.log(removeBonuses);
+        let f: PIXI.Sprite[] = this._blocksBonus;
+        for (let i = 0; i < f.length; i++) {
+            this.app.stage.addChild(f[i]);
+        }
+        for (let i = 0; i < removeBonuses.length; i++) {
+            this.app.stage.removeChild(f[i]);
+        }
+    }
+    //створюємо м'ячі
     private createBall(): void {
         this._balls.push(this.createBlockGame('./assets/Ball.png',250,560,25,25, 'ball'));
     }
@@ -299,17 +320,16 @@ export default class View {
                 this.app.stage.removeChild(blockRemove[i]);
             }
         }
+        this.removeBonusBlock();
         // this.createTextScore(this._model.getState().scoreText);
         // this.renderScoreText();
+        // if (this._scoresText.length) {
+        //     this.moveTextScore(this._scoresText);
+        // }
     }
     public renderScoreText(): void {
         for (let i = 0; i < this._scoresText.length; i++) {
-            if (this._scoresText[i].y != (this._scoresText[i].y + 50)) {
-                this.app.stage.addChild(this._scoresText[i]);
-                this.moveTextScore(this._scoresText);
-            } else {
-                this.app.stage.removeChild(this._scoresText[i]);
-            }
+            this.app.stage.addChild(this._scoresText[i]);
         }
     }
     //малюємо м'ячі

@@ -38,6 +38,7 @@ export default class Controller {
             this._model.checkBoundsPlatform(state,this._ballOnPlatform);
             this._view.deleteStartScreen();
             this._model.levelApp();
+            this.followBonus(state);
         }
         if (this._model.getState().GameOver) {
             this._view.renderEndScreen();
@@ -47,7 +48,6 @@ export default class Controller {
             this._inGame = false;
         }
     }
-
     //рух елементів гри
     private moveElements(): void {
         const state = this._view.getSprite();
@@ -66,9 +66,11 @@ export default class Controller {
         if (!this._ballOnPlatform ) {
             this._model.realiseBall(state.balls[0]);
         }
+        let bonuses: PIXI.Sprite[] = this._view.getSprite().bonuses;
+        for (let i = 0; i < bonuses.length; i++) {
+            this._model.gravityBonuses(bonuses[i]);
+        }
     }
-
-
     private restart(): void {
         this._ballOnPlatform = true;
         this._view.deleteEndScreen();
@@ -78,6 +80,12 @@ export default class Controller {
 
     private startTimer(): void {
         this._view.app.ticker.add(delta => this.update(delta));
+    }
+    private followBonus(state): void {
+
+        this._view.createBonusBlock(this._model.getBonusField());
+        this._model.catchBonus(state);
+        //this._view.removeBonusBlock();
     }
     //виводимо екран паузи
     private updatePauseScreen(): void {

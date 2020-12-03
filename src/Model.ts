@@ -7,11 +7,12 @@ export type TGameState = {
     playField: number[][];
     blockRemove: PIXI.Sprite[];
     levelGame: number;
-    scoreText: TScoreText[];
+    scoreText: TPixiObject[];
     levelPassed: boolean;
+    removeBonuses: PIXI.Sprite[];
 };
 
-export type TScoreText = {
+export type TPixiObject = {
     score: number;
     x: number;
     y: number;
@@ -23,14 +24,18 @@ export default class Model {
     private _velocityBall = 3; //максимальна швидкість м'яча
     private _velocityBallX = this._velocityBall;
     private _velocityBallY = this._velocityBall;
+    private _velocityBonus = 3;
     private _score: number = 0; // рахунок
     private _gameOver: boolean = false;
     private _playField: number[][] = []; //ігрове поле
     private _levelGame: number = 1;
     private _blockRemove: PIXI.Sprite[] = [];//масив блоків для видалення
-    private _scoreText: TScoreText[] = [];
+    private _scoreText: TPixiObject[] = [];
     private _numbersOfBlocksInLevels: number = 0;
     private _levelPassed = false;
+    private _scoresBonus: number[] = [];
+    private _bonusField: TPixiObject[] = [];
+    private _removeBonuses: PIXI.Sprite[] = [];
 
     constructor() {
         this.reset();
@@ -44,15 +49,18 @@ export default class Model {
             blockRemove: this._blockRemove,
             levelGame: this._levelGame,
             scoreText: this._scoreText,
-            levelPassed: this._levelPassed
+            levelPassed: this._levelPassed,
+            removeBonuses: this._removeBonuses
         }
     }
     public reset(): void {
         this._gameOver = false;
         this._score = 0;
         this._blockRemove = [];
+        this._bonusField = [];
         this.createGameField();
         this._levelPassed = false;
+        this.createBonus();
     }
     // створюємо ігрове поле
     private createGameField(): number[][] {
@@ -76,21 +84,32 @@ export default class Model {
     // створюємо перший рівень
     private createLevelOne(): number[][] {
         const playField: number[][] = [];
-
-        for (let y = 0; y < 4; y++) {
-            playField[y] = new Array(10).fill(0);
-            this._numbersOfBlocksInLevels = playField[y].length;
+        const line = 4;
+        const column = 10;
+        for (let y = 0; y < line; y++) {
+            playField[y] = new Array(column).fill(0);
         }
+        this._numbersOfBlocksInLevels = line * column;
         return playField;
     }
 
     private createLevelTwo(): number[][] {
         const playField: number[][] = [];
+        const line = 4;
+        const column = 10;
         for (let y = 0; y < 4; y++) {
             playField[y] = new Array(10).fill(y);
-            this._numbersOfBlocksInLevels = playField[y].length;
         }
+        this._numbersOfBlocksInLevels = line * column;
         return playField;
+    }
+
+    public getBonusField(): TPixiObject[] {
+        return this._bonusField;
+    }
+
+    public gravityBonuses(bonus: PIXI.Sprite): void {
+            bonus.y += this._velocityBonus;
     }
 
     public movePlatformLeft(platform: PIXI.Sprite): void {
@@ -114,6 +133,20 @@ export default class Model {
        //ball.y -= this._velocityBallY;
         ball.y -= this._velocityBallY / 0.5;
     }
+    //ловимо бонус
+    public catchBonus({platforms, bonuses}): void {
+        let removeBonus: PIXI.Sprite[] = [];
+        for (let i = 0; i < bonuses.length; i++) {
+            if (this.hasCollision(platforms[0],bonuses[i])) {
+               removeBonus.push(bonuses[i]);
+
+            } else if (bonuses[i].y > 660) {
+                removeBonus.push(bonuses[i]);
+
+            }
+        }
+        this._removeBonuses = removeBonus;
+    }
     //видаляємо блоки що вибили
     public clearBlock({balls, blocks}): void {
         for (let i = 0; i < blocks.length; i ++) {
@@ -122,20 +155,59 @@ export default class Model {
                 let words = blocks[i].name.split('_');
                 let name = words[0];
                 this._score += this.scoresGame(name); //змінюємо рахунок
+                if (this._score > this._scoresBonus[0]) {
+                    let bF: TPixiObject = {
+                        score: 0,
+                        x: blocks[i].x,
+                        y: blocks[i].y
+                    }
+                    this._bonusField.push(bF);
+                    this._scoresBonus.shift();
+                }
                 this._blockRemove.push(blocks[i]); //додаємо блок в масив
-                let sT: TScoreText = {
+                let sT: TPixiObject = {
                     score: this.scoresGame(name),
                     x: blocks[i].x,
                     y: blocks[i].y
                 };
                 this._scoreText.push(sT);
                 blocks.splice(i,1); //видаляємо блок з поля
-                console.log('bR ' + this._blockRemove.length);
-                console.log('n' + this._numbersOfBlocksInLevels);
             }
         }
     }
+    //максимальний рахунок в рівні
+    private maxScoreLevel(): number {
+        let maxScore: number = 0;
+        for (let i = 0; i < this._playField.length; i++) {
+            for (let j = 0; j < this._playField[i].length; j++) {
+                if (this._playField[i][j] == 0) {
+                    maxScore += this.scoresGame('Green');
+                } else if (this._playField[i][j] == 1) {
+                    maxScore += this.scoresGame('Blue');
+                } else if (this._playField[i][j] == 2) {
+                    maxScore += this.scoresGame('Yellow');
+                } else if (this._playField[i][j] == 3) {
+                    maxScore += this.scoresGame('Pink');
+                } else if (this._playField[i][j] == 4) {
+                    maxScore += this.scoresGame('Violet');
+                }
+            }
+        }
+        return maxScore;
+    }
+    //створюємо бонуси
+    private createBonus(): void {
+        let mS = this.maxScoreLevel();
 
+        for (let i = 0; i < 8; i++) {
+            this._scoresBonus.push(Math.random() * (mS - 50));
+        }
+        this._scoresBonus.sort(this.compareNumbers);
+    }
+    private compareNumbers(a, b) {
+        return a - b;
+    }
+    //ціна очків за блок
     private scoresGame(elements: string): number {
         let score: number;
         switch (elements) {
@@ -218,7 +290,7 @@ export default class Model {
     private leftSidePlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): boolean {
         return (ball.x + ball.width / 2) < (platform.x + platform.width / 2);
     }
-
+    //зміна рівня
     public levelApp(): void {
         if (this._numbersOfBlocksInLevels == this._blockRemove.length) {
             this._levelPassed = true;
