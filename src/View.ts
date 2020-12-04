@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Model from "./Model"
+import Model, {TPixiObject} from "./Model"
 import * as TWEEN from '@tweenjs/tween.js'
 import {ColorBlock} from './ColorBlock'
 import {Bonus} from './ColorBlock'
@@ -69,6 +69,7 @@ export default class View {
         this.deleteMainScreen();
         this.removeGameElements();
         this.createPlayField(state);
+        this.createTextScore();
         this.createPanel();
         this.renderTextScreen();
     }
@@ -80,53 +81,47 @@ export default class View {
         this.renderStartScreen();
     }
     // створюємо текст випадаючого рахунку
-    // private createTextScore(scoreText: TPixiObject[]): void {
-    //     const style = new PIXI.TextStyle({
-    //         fill: "#212121",
-    //         fontSize: 20,
-    //         stroke: "#fafafa",
-    //         strokeThickness: 2
-    //     });
-    //
-    //     for (let i = this._scoresText.length; i < scoreText.length; i++) {
-    //         let sT = new PIXI.Text('+'+scoreText[i].score.toString(),style);
-    //         sT.x = scoreText[i].x;
-    //         sT.y = scoreText[i].y;
-    //         sT.name = i.toString();
-    //         this._scoresText.push(sT);
-    //         // this._scoresText[i] = new PIXI.Text(scoreText[i].score.toString(),style);
-    //         // this._scoresText[i].x = scoreText[i].x;
-    //         // this._scoresText[i].y = scoreText[i].y;
-    //         // this._scoresText[i].name = i.toString();
-    //     }
-    // }
-    // рухаємо текст випадаючого рахунку
-    private moveTextScore(scoresText: PIXI.Text[]): void {
-        let sT;
-        for (let i = 0; i < scoresText.length; i++) {
-            sT = scoresText[i];
+    private createTextScore(): void {
+        let scoreText: TPixiObject[] = this._model.createScoreText(this._blocks);
+        const style = new PIXI.TextStyle({
+            fill: "#212121",
+            fontSize: 20,
+            stroke: "#fafafa",
+            strokeThickness: 2
+        });
+
+        for (let i = this._scoresText.length; i < scoreText.length; i++) {
+            let sT = new PIXI.Text('+' + scoreText[i].number.toString(),style);
+            sT.x = scoreText[i].x;
+            sT.y = scoreText[i].y;
+            sT.name = i.toString();
+            this._scoresText.push(sT);
         }
+    }
+    // рухаємо текст випадаючого рахунку
+    private moveTextScore(scoresText: PIXI.Text): void {
+
         const from = {
-            y: sT.y,
+            y: scoresText.y,
             alpha: 0
         }
         const to = {
-            y: sT.y - 50,
+            y: scoresText.y + 50,
             alpha: 1
         }
         let tween = new TWEEN.Tween(from)
         tween.to(to,600);
         tween.onUpdate(() => {
-            sT.y = from.y
-            sT.alpha = from.alpha
-            // if (sT.y == to.y) {
-            //     this.removeTextScore(this._scoresText, sT);
+            scoresText.y = from.y
+            scoresText.alpha = from.alpha
+            // if (scoresText.y == to.y) {
+            //     this.removeTextScore(this._scoresText, scoresText);
             //     tween.stop();
             // }
         });
-        tween.onComplete(()=> {
-            this.removeTextScore(this._scoresText,sT);
-        });
+        // tween.onComplete(()=> {
+        //     this.removeTextScore(this._scoresText,scoresText);
+        // });
         tween.start();
     }
     //видаляємо текст випадаючого рахунку
@@ -169,11 +164,11 @@ export default class View {
             }
             blockY += 35;
         }
+        this.createTextScore();
         let widthPlatform = this._model.getState().widthPlatform;
         this._platforms.push(this.createBlockGame('./assets/Line.png',210,585,14,widthPlatform, 'platform'));
         this.createBall();
     }
-
     public widthPlatform ({widthPlatform}): void {
         this._platforms[0].width = widthPlatform;
     }
@@ -302,56 +297,63 @@ export default class View {
     }
     //малюємо ігрове поле
     private renderPlayField(): void {
+        const blockRemove = this._model.getState().blockRemove;
+        const removeBonuses = this._model.getState().removeBonuses;
         this.app.stage.addChild(this._appGame);
-        //малюємо платформу
-        for (let i = 0; i < this._platforms.length; i++) {
-            this.app.stage.addChild(this._platforms[i]);
-        }
+        this.renderPlatform();
         this.renderBalls();
-        //малюємо блоки
+        this.renderBlocks();
+        this.deleteBlock(blockRemove);
+        this.deleteBonus(removeBonuses);
+    }
+    //малюємо блоки
+    private renderBlocks(): void {
         for (let i = 0; i < this._blocks.length; i++) {
             this.app.stage.addChild(this._blocks[i]);
         }
-        const blockRemove = this._model.getState().blockRemove;
-        const removeBonuses = this._model.getState().removeBonuses;
-
+    }
+    //малюємо платформу
+    private renderPlatform(): void {
+        for (let i = 0; i < this._platforms.length; i++) {
+            this.app.stage.addChild(this._platforms[i]);
+        }
+    }
+    private deleteBonus(removeBonuses): void {
+        for (let i = 0; i < removeBonuses.length; i++) { //перегдядаємо список бонусів для видалення
+            this.app.stage.removeChild(removeBonuses[i]);
+            for (let j = 0; j < this._blocksBonus.length; j++) {
+                if (removeBonuses[i].name == this._blocksBonus[j].name) { //якщо ім'я зі списко співпало з іменем бонусу
+                    this._blocksBonus.splice(j,1); //видаляємо даний бонус
+                }
+            }
+        }
+    }
+    private deleteBlock(blockRemove): void {
         if (blockRemove.length > 0) {
             for (let i = 0; i < blockRemove.length; i++) {
                 this.app.stage.removeChild(blockRemove[i]);
-                let wordsRemove = blockRemove[i].name.split('_');
+                let wordsRemove = blockRemove[i].name.split('_'); //отримуємо масив з координатами з назви
                 for (let j = 0; j < this._blocksBonus.length; j++) {
-                    let wordsBonus = this._blocksBonus[j].name.split('_');
-                        if (wordsRemove[wordsRemove.length - 2] == wordsBonus[wordsBonus.length - 2] &&
-                            wordsRemove[wordsRemove.length - 1] == wordsBonus[wordsBonus.length - 1]) {
-                            this.app.stage.addChild(this._blocksBonus[j]);
-                            this._nameBonuses.push(this._blocksBonus[j].name);
+                    let wordsBonus = this._blocksBonus[j].name.split('_'); //отримуємо масив з координатами з назви
+                    if (wordsRemove[wordsRemove.length - 2] == wordsBonus[wordsBonus.length - 2] && // якщо дві координати співпали
+                        wordsRemove[wordsRemove.length - 1] == wordsBonus[wordsBonus.length - 1]) {
+                        this.app.stage.addChild(this._blocksBonus[j]);  //малюємо бонус по даній координаті
+                        this._nameBonuses.push(this._blocksBonus[j].name);  //додпємо імя до списку
+                    }
+                    for (let k = 0; k < this._scoresText.length; k++) {
+                        if (blockRemove[i].x == this._scoresText[k].x &&
+                            blockRemove[i].y == this._scoresText[k].y) {
+                            this.renderScoreText(this._scoresText[k]);
                         }
+                    }
                 }
             }
         }
-        for (let i = 0; i < removeBonuses.length; i++) {
-            this.app.stage.removeChild(removeBonuses[i]);
-            for (let j = 0; j < this._blocksBonus.length; j++) {
-                if (removeBonuses[i].name == this._blocksBonus[j].name) {
-                    this._blocksBonus.splice(j,1);
-                }
-            }
-        }
-
-
-
-
-        //this.removeBonusBlock();
-        // this.createTextScore(this._model.getState().scoreText);
-        // this.renderScoreText();
-        // if (this._scoresText.length) {
-        //     this.moveTextScore(this._scoresText);
-        // }
     }
-    public renderScoreText(): void {
-        for (let i = 0; i < this._scoresText.length; i++) {
-            this.app.stage.addChild(this._scoresText[i]);
-        }
+    public renderScoreText(scoreText: PIXI.Text): void {
+            this.app.stage.addChild(scoreText);
+            this.moveTextScore(scoreText);
+        //
     }
     //малюємо м'ячі
     private renderBalls(): void {

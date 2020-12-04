@@ -171,6 +171,7 @@ export default class Model {
         }
         this._removeBonuses = removeBonus;
     }
+    //виконуємо умову бонусу
     private activeBonus(bonus: string): void {
         this._catchBonuses.push(bonus);
         if (this._catchBonuses[this._catchBonuses.length - 1] == this._actBonus) {
@@ -197,12 +198,6 @@ export default class Model {
                 let name = words[0];
                 this._score += this.scoresGame(name); //змінюємо рахунок
                 this._blockRemove.push(blocks[i]); //додаємо блок в масив
-                // let sT: TPixiObject = {
-                //     score: this.scoresGame(name),
-                //     x: blocks[i].x,
-                //     y: blocks[i].y
-                // };
-                //this._scoreText.push(sT);
                 blocks.splice(i,1); //видаляємо блок з поля
             }
         }
@@ -219,6 +214,23 @@ export default class Model {
             x[i] = a;
         }
         return x;
+    }
+    //створюємо поле балів
+    public createScoreText(blocks: PIXI.Sprite[]): TPixiObject[] {
+        let scoresText: TPixiObject[] = [];
+        let score: number = 0;
+        for (let i = 0; i < blocks.length; i++) {
+            let words = blocks[i].name.split('_');
+            let name = words[0];
+             score = this.scoresGame(name);
+            let obj: TPixiObject = {
+                number: score,
+                x: blocks[i].x,
+                y: blocks[i].y
+            }
+            scoresText.push(obj);
+        }
+        return scoresText;
     }
     //ціна очків за блок
     private scoresGame(elements: string): number {
@@ -305,10 +317,10 @@ export default class Model {
     }
     //зміна рівня
     public levelApp(): void {
-        if (this._numbersOfBlocksInLevels == this._blockRemove.length) {
-            this._levelPassed = true;
-            this._levelGame ++;
-            this._numbersOfBlocksInLevels = 0;
+        if (this._numbersOfBlocksInLevels == this._blockRemove.length) { //якщо кількість вибитих блокі вірний кількості блоків
+            this._levelPassed = true;   // рівень закінчений
+            this._levelGame ++;     //збільшуємо рівень
+            this._numbersOfBlocksInLevels = 0;  // оновлюємо кількість вибитих блоків
         }
     }
     private updateScore(): void {
