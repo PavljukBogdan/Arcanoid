@@ -10,6 +10,7 @@ export type TGameSprite = {
     blocks: PIXI.Sprite[];
     bonuses: PIXI.Sprite[];
     nameBonus: string[];
+    app: PIXI.Application;
 };
 
 export default class View {
@@ -20,7 +21,6 @@ export default class View {
     private _balls: PIXI.Sprite[] = []; // масив м'ячів
     private _blocks: PIXI.Sprite[] = []; // масив блоків
     private _blocksBonus: PIXI.Sprite[] = [];
-     //масив блоків, що видаляються
     private _element: Element | null; //дом. елемент
     private readonly _width: number; //ширина ігрового поля
     private readonly _height: number; //висота ігрового поля
@@ -56,7 +56,8 @@ export default class View {
             balls: this._balls,
             blocks: this._blocks,
             bonuses: this._blocksBonus,
-            nameBonus: this._nameBonuses
+            nameBonus: this._nameBonuses,
+            app: this.app
         }
     }
     //перезапуск
@@ -351,9 +352,8 @@ export default class View {
         }
     }
     public renderScoreText(scoreText: PIXI.Text): void {
-            this.app.stage.addChild(scoreText);
-            this.moveTextScore(scoreText);
-        //
+        this.app.stage.addChild(scoreText);
+        this.moveTextScore(scoreText);
     }
     //малюємо м'ячі
     private renderBalls(): void {
