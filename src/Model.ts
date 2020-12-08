@@ -9,15 +9,20 @@ export type TGameObject = {
     y: number;
 }
 
+export type TGamePlatform = {
+
+}
+
 export type TGameState = {
     playField: TGameObject[][]
 }
 
 export default class Model {
-
+    //------------------- constants ---------------------//
     private readonly _columnField: number = 10; //кількість стовпців на полі
     private readonly _lineField: number = 4; //кількість рядків на полі
-    private _levelGame: number = 2; //рівень гри
+    //------------------- dataGame ---------------------//
+    private _levelGame: number = 1; //рівень гри
     private _playField: TGameObject[][] = this.createGameField(this._levelGame); //грове поле
 
     constructor() {
@@ -55,7 +60,7 @@ export default class Model {
         }
         return playField;
     }
-    //створюємо перший рівень
+    //створюємо рівень
     private crateLevel(typeBlock: number[]): TGameObject[][] {
 
         const bonusField: TGameObject[] = this.createBonusField(); //створюємо бонуси
