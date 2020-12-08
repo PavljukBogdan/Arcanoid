@@ -1,14 +1,15 @@
 export enum ColorBlock {
-    'Green',
-    'Blue',
-    'Yellow',
-    'Pink',
-    'Violet'
+    'Blue_1',
+    'Blue_2',
+    'Blue_3',
+    'Blue_4',
+    'Blue_5'
 }
 
 export enum Bonus {
     'short',
     'long',
-    'speed'
+    'red',
+    'green'
 
 }

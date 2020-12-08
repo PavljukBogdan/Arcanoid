@@ -13,8 +13,11 @@ declare global {
 const root = document.querySelector('#root');
 
 const model = new Model();
+// const view = new View(root,550,660, model);
+// const controller = new Controller(model,view);
+
 const view = new View(root,550,660, model);
-const controller = new Controller(model,view);
+ const controller = new Controller(model, view);
 
 
 window.view = view;
