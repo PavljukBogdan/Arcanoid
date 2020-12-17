@@ -13,3 +13,11 @@ export enum Bonus {
     'green'
 
 }
+
+export enum GameState {
+    'createGame',
+    'inGame',
+    'pauseGame',
+    'gameOver',
+    'levelPassed'
+}

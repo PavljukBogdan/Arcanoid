@@ -1,8 +1,8 @@
 import Model, {TGameObject, TGameState} from "./Model";
 import * as PIXI from 'pixi.js'
 import * as TWEEN from '@tweenjs/tween.js'
-import {ColorBlock} from './ColorBlock'
-import {Bonus} from './ColorBlock'
+import {Bonus, ColorBlock, GameState} from './ColorBlock'
+import ViewText from "./ViewText";
 
 export type TGameElements = {
     platform: PIXI.Sprite;
@@ -10,11 +10,13 @@ export type TGameElements = {
     blocks: PIXI.Sprite[];
     bonusSprite: PIXI.Sprite[];
     scoreText: PIXI.Text[];
+    app: PIXI.Application;
 }
 
 export default class View {
 
     private _model: Model;
+    private _viewText: ViewText
 
     private _element: Element | null; //дом. елемент
     private readonly _width: number; //ширина ігрового поля
@@ -27,11 +29,12 @@ export default class View {
     private _platform: PIXI.Sprite = this.createPlatform(); // платформа
     private _ball: PIXI.Sprite = this.createBall(); // кулька
 
-    constructor(element: Element | null, width: number, height: number, model: Model) {
+    constructor(element: Element | null, width: number, height: number, model: Model, viewText: ViewText) {
         this._element = element;
         this._width = width;
         this._height = height;
-        this._model = model
+        this._model = model;
+        this._viewText = viewText;
         this.app = new PIXI.Application({
             width: this._width, //ширина ігрового полотна
             height: this._height, //висота ігрового полотна
@@ -39,7 +42,6 @@ export default class View {
             resolution: window.devicePixelRatio || 1,
         });
         this.init();
-
     }
 
     //------------------- manageStatus ---------------------//
@@ -49,9 +51,12 @@ export default class View {
         this.reset();
     }
     //перезапуск
-    private reset(): void {
+    public reset(): void {
         const state = this._model.getState();
-        this.createPlayField(state); // створюємо об'єкти ігрового поля
+        this._blocksSprite = this.createPlayField(state); // створюємо об'єкти ігрового поля
+        this._platform = this.createPlatform(); // платформа
+        this._ball = this.createBall(); // кулька
+        this._scoreText = [];
     }
     // отримуємо ігрові елементи
     public getElementsGame(): TGameElements {
@@ -60,13 +65,15 @@ export default class View {
             ball: this._ball,
             blocks: this._blocksSprite,
             bonusSprite: this._bonusSprite,
-            scoreText: this._scoreText
+            scoreText: this._scoreText,
+            app: this.app
         };
     }
 
     //------------------- createSprite ---------------------//
     //створюємо блоки ігрового поля
-    private createPlayField({playField}: TGameState) {
+    private createPlayField({playField}: TGameState): PIXI.Sprite[] {
+        const blockSprite: PIXI.Sprite[] = [];
         //створюємо беграунд
         this._appGame = this.createElementGame('./assets/BG.jpg', 0,100,560,550,'appGame');
         //створюємо об'єкти рівня
@@ -76,12 +83,13 @@ export default class View {
             for (let x = 0; x < playField[y].length; x++) {
                 const color: string = ColorBlock[playField[y][x].typeBlock];
                 //створюємо бонуси, та заносимо в масив
-                this._blocksSprite.push(this.createElementGame(`./assets/${color}.png`,blockX,blockY,30,50, `${color}_block_`+ x + '_' + y));
+                blockSprite.push(this.createElementGame(`./assets/${color}.png`,blockX,blockY,30,50, `${color}_block_`+ x + '_' + y));
                 this.createBonusBlocks(playField[y][x],blockX,blockY,x,y); // створюємо бонуси
                 blockX += 50;
             }
             blockY += 35;
         }
+        return blockSprite;
     }
     //створюємо бонуси
     private createBonusBlocks(bonus: TGameObject, blockX,blockY,x,y): void {
@@ -93,8 +101,6 @@ export default class View {
     //створюємо платформу
     private createPlatform(): PIXI.Sprite {
         let widthPlatform = 100;
-
-
         return this.createElementGame('./assets/Line-1.png',210,585,14,widthPlatform, 'platform');
     }
     //створюємо кульку
@@ -115,20 +121,35 @@ export default class View {
     private createTextScore(sprite: PIXI.Sprite): PIXI.Text {
         const x = sprite.x;
         const y = sprite.y;
-        const nameSprite = sprite.name;
+        let name = sprite.name.split('_');
+        let score: number = Number(name[1]) * 10;
         const style = new PIXI.TextStyle({
             fill: "#212121",
             fontSize: 20,
             stroke: "#fafafa",
             strokeThickness: 2
         });
-        const text: PIXI.Text = new PIXI.Text('+10',style);
+
+        const text: PIXI.Text = new PIXI.Text(`+${score}`,style);
         text.x = x;
         text.y = y;
         return text;
     }
 
     //------------------- renderSprite ---------------------//
+    //малюэмо текст
+    public renderGameText(gameState: GameState, state: TGameState): void {
+
+        if (gameState == GameState.createGame) {
+            this._viewText.renderStartScreen(this.app);
+        } else if (gameState == GameState.inGame) {
+            this._viewText.renderTextScreen(this.app,state.score,state.level);
+        } else if (gameState == GameState.pauseGame) {
+            this._viewText.renderPauseScreen(this.app);
+        } else if (gameState == GameState.gameOver) {
+            this._viewText.renderEndScreen(this.app);
+        }
+    }
     //малюємо ігровий екран
     public renderMainScreen(): void {
         this.renderPlayField(); //малюємо ігрове поле
@@ -176,6 +197,7 @@ export default class View {
         this.app.stage.addChild(text);
     }
     //------------------- renderTWEEN ---------------------//
+    //рухаємо текст балів
     public moveTS(text: PIXI.Text[]): void {
         for (let i = 0; i < text.length; i++) {
             this.moveTextScore(text[i]);

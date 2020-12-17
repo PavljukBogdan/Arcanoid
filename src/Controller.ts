@@ -1,6 +1,7 @@
 import Model from "./Model"
 import View, {TGameElements} from "./View";
 import * as TWEEN from '@tweenjs/tween.js'
+import {GameState} from "./ColorBlock";
 
 export default class Controller {
 
@@ -9,7 +10,8 @@ export default class Controller {
 
     private _moveLeft: boolean = false; // рух ліворуч
     private _moveRight: boolean = false; // рух праворуч
-    private _ballOnPlatform = true;
+    private _ballOnPlatform: boolean = true; //чи куля на платформі
+    private _gameState = GameState.createGame;
 
     constructor(model: Model, view: View) {
         this._model = model;
@@ -20,20 +22,31 @@ export default class Controller {
 
         this.startTimer();
     }
+
     //------------------- gameLoop ---------------------//
 
     private update(delta: object):void {
         TWEEN.update();
-        const state = this._view.getElementsGame();
-        this._view.renderMainScreen();
-        let block: PIXI.Sprite = this.tryClearBlocks(state);
-        this.moveElements(state,block);
-
-        this._view.moveTS(state.scoreText);
+        this._view.renderGameText(this._gameState,this._model.getState());//виводимо текст на екран
+        if (this._gameState == GameState.inGame) { //якщо в грі
+            const state = this._view.getElementsGame();
+            this._view.renderMainScreen();  //малюємо ігрові елементи
+            let block: PIXI.Sprite = this.tryClearBlocks(state); //перевіряємо які блоки потрібно видалити
+            this.moveElements(state,block); //рухаємо елементи
+            this._view.moveTS(state.scoreText); //рухаємо текст рахунку
+        }
     }
 
     private startTimer(): void {
         this._view.app.ticker.add(delta => this.update(delta));
+    }
+
+    private restart() {
+        this._ballOnPlatform = true;
+        this._moveLeft = false;
+        this._moveRight = false;
+        this._model.reset();
+        this._view.reset();
     }
 
     //------------------- gameEvents ---------------------//
@@ -53,8 +66,8 @@ export default class Controller {
         }
         if (!this._ballOnPlatform) { //якщо кулька не на платформі
             let speedBall = this._model.getState().speedBall;
-            this._model.realiseBall(state.ball, speedBall); // рухаємо кулю
-            this._model.jumpInPlatform(state); //відбиваємо кулю від платформи
+            this._gameState = this._model.jumpInPlatform(state); //відбиваємо кулю від платформи
+            this._gameState = this._model.realiseBall(state.ball, speedBall); // рухаємо кулю
         }
         this._model.moveBonuses(state);
         this._model.widthPlatform(state.platform, this._model.getState().widthPlatform);
@@ -74,17 +87,26 @@ export default class Controller {
         }
         return block;
     }
-
     //------------------- keyboardEvent ---------------------//
     //слідкуємо за натисканням клавіш
     private handleKeyDown(e: KeyboardEvent): void {
-        const state = this._view.getElementsGame();
         switch (e.key) {
             case 'ArrowUp':
                 this._ballOnPlatform = false;
                 break;
             case 'Enter':
-
+                let gameState;
+                if (this._gameState == GameState.createGame) {
+                    gameState = GameState.inGame;
+                } else if (this._gameState == GameState.inGame) {
+                    gameState = GameState.pauseGame;
+                 } else if (this._gameState == GameState.pauseGame) {
+                    gameState = GameState.inGame;
+                 } else if (this._gameState == GameState.gameOver) {
+                    this.restart();
+                    gameState = GameState.inGame;
+                }
+                this._gameState = gameState;
                 break;
             case 'ArrowLeft':
                 this._moveLeft = true;
