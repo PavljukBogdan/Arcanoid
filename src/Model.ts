@@ -206,17 +206,24 @@ export default class Model {
             bonus.y += this.VELOCITY_BONUS;
     }
     //запускаємо гравітацію бонусів
-    public moveBonuses(state: TGameElements): void {
-        const bonuses = state.bonusSprite;
-        const platform = state.platform;
+    public moveBonuses(state: TGameElements): string {
+        const bonuses: PIXI.Sprite[] = state.bonusSprite;
+        const platform: PIXI.Sprite = state.platform;
+        let bonusName: string = '';
+        let deleteBonus
         for (let i = 0; i < this._nameBonuses.length; i++) {
             for (let j = 0; j < bonuses.length; j++) {
                 if (this._nameBonuses[i] == bonuses[j].name) {
                     this.gravityBonuses(bonuses[j]);
-                    this.catchBonus(bonuses[j], platform);
+                    let deleteBonus = this.catchBonus(bonuses[j], platform);
+                    if (deleteBonus) {
+                        bonusName = bonuses[j].name;
+                    }
                 }
             }
+            return bonusName;
         }
+        return deleteBonus;
     }
     //------------------- deleteElements ---------------------//
     //видаляємо блоки
@@ -239,7 +246,6 @@ export default class Model {
 
         if (activeBonus[activeBonus.length - 1] == name[0]) {
             this._score += 100;
-
         }
         activeBonus.splice(bonus[0]);
 
@@ -311,14 +317,19 @@ export default class Model {
     private leftSidePlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): boolean {
         return (ball.x + ball.width / 2) < (platform.x + platform.width / 2);
     }
+    //зміна кута кулі
     //ловимо бонус
-    private catchBonus(bonus: PIXI.Sprite, platform: PIXI.Sprite): void {
+    private catchBonus(bonus: PIXI.Sprite, platform: PIXI.Sprite): boolean {
+        let deleteBonusSprite = false;
         if ((bonus.y + bonus.height) > 660) {
             let index = this._nameBonuses.indexOf(bonus.name);
             this._nameBonuses.splice(index,1);
+            deleteBonusSprite = true;
         } else if(this.hasCollision(bonus, platform)) {
             this.activeBonus(bonus);
+            deleteBonusSprite = true;
         }
+        return deleteBonusSprite;
     }
     public levelApp(): GameState {
         let gameState: GameState = GameState.inGame;
@@ -327,7 +338,6 @@ export default class Model {
             gameState = GameState.levelPassed;
             this._numberOfKnockedOutBlocks = 0;
         }
-        console.log(gameState);
         return GameState.inGame;
     }
  }

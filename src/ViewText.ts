@@ -87,26 +87,44 @@ export default class ViewText {
     //малюємо стартовий напис
     public renderStartScreen(app: PIXI.Application): void {
         app.stage.addChild(this._startText);
-        //this.textAnimation(this._startText);
+        this.textAnimation(this._startText);
     }
     //малюємо напис паузи
     public renderPauseScreen(app: PIXI.Application): void {
         app.stage.addChild(this._pauseText);
-        //this.textAnimation(this._pauseText);
+        this.textAnimation(this._pauseText);
     }
     //малюємо текст гри
-    public renderTextScreen(app: PIXI.Application, score: number, level: number): void {
-        this._textScore.text = `score - ${score.toString()}`;
-        this._textLevel.text = `level - ${level.toString()}`;
+    public renderTextScreen(app: PIXI.Application): void {
         app.stage.addChild(this._textScore);
         app.stage.addChild(this._textLevel);
+    }
+    //присвоюємо значення тексту гри
+    public updateTextScreen(score: number, level: number): void {
+        this._textScore.text = `score - ${score.toString()}`;
+        this._textLevel.text = `level - ${level.toString()}`;
     }
     //малюємо екран закінчення
     public renderEndScreen(app: PIXI.Application): void {
         app.stage.addChild(this._endText);
+        this._endText.alpha = 0;
     }
     //малюємо текст наступного рівня
     public renderNextLevelScreen(app: PIXI.Application): void {
         app.stage.addChild(this._nextLevelText);
+        this.textAnimation(this._nextLevelText);
+    }
+    //------------------- deleteText ---------------------//
+    public deletePauseScreen(app: PIXI.Application): void {
+        app.stage.removeChild(this._pauseText);
+    }
+    public deleteEndScreen(app: PIXI.Application): void {
+        app.stage.removeChild(this._endText);
+    }
+    //------------------- addText ---------------------//
+    public addEndScreen(): void {
+        this._startText.alpha = 0;
+        this._endText.alpha = 1;
+        //this.textAnimation(this._endText);
     }
 }

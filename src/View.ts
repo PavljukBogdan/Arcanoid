@@ -16,7 +16,6 @@ export type TGameElements = {
 export default class View {
 
     private _model: Model;
-    private _viewText: ViewText
 
     private _element: Element | null; //дом. елемент
     private readonly _width: number; //ширина ігрового поля
@@ -25,16 +24,16 @@ export default class View {
     private _appGame: PIXI.Sprite; //беграунд
     private _blocksSprite: PIXI.Sprite[] = []; //масив ігрових блоків
     private _bonusSprite: PIXI.Sprite[] = []; //масив  блоків бонусів
-    private _scoreText: PIXI.Text[] = [];
+    private _scoreText: PIXI.Text[] = []; //масив тексту вибитих блоків
     private _platform: PIXI.Sprite = this.createPlatform(); // платформа
     private _ball: PIXI.Sprite = this.createBall(); // кулька
 
-    constructor(element: Element | null, width: number, height: number, model: Model, viewText: ViewText) {
+    constructor(element: Element | null, width: number, height: number, model: Model) {
         this._element = element;
         this._width = width;
         this._height = height;
         this._model = model;
-        this._viewText = viewText;
+
         this.app = new PIXI.Application({
             width: this._width, //ширина ігрового полотна
             height: this._height, //висота ігрового полотна
@@ -53,10 +52,12 @@ export default class View {
     //перезапуск
     public reset(): void {
         const state = this._model.getState();
+        this._bonusSprite = [];
         this._blocksSprite = this.createPlayField(state); // створюємо об'єкти ігрового поля
         this._platform = this.createPlatform(); // платформа
         this._ball = this.createBall(); // кулька
         this._scoreText = [];
+        this.createTextScoreField();
     }
     // отримуємо ігрові елементи
     public getElementsGame(): TGameElements {
@@ -133,23 +134,18 @@ export default class View {
         const text: PIXI.Text = new PIXI.Text(`+${score}`,style);
         text.x = x;
         text.y = y;
+        text.name = sprite.name;
         return text;
+    }
+    private createTextScoreField(): void {
+        for (let i = 0; i < this._blocksSprite.length; i++) {
+            const text: PIXI.Text = this.createTextScore(this._blocksSprite[i]); //створюємо текст балів
+            this._scoreText.push(text);
+        }
+
     }
 
     //------------------- renderSprite ---------------------//
-    //малюэмо текст
-    public renderGameText(gameState: GameState, state: TGameState): void {
-
-        if (gameState == GameState.createGame) {
-            this._viewText.renderStartScreen(this.app);
-        } else if (gameState == GameState.inGame) {
-            this._viewText.renderTextScreen(this.app,state.score,state.level);
-        } else if (gameState == GameState.pauseGame) {
-            this._viewText.renderPauseScreen(this.app);
-        } else if (gameState == GameState.gameOver) {
-            this._viewText.renderEndScreen(this.app);
-        }
-    }
     //малюємо ігровий екран
     public renderMainScreen(): void {
         this.renderPlayField(); //малюємо ігрове поле
@@ -158,15 +154,13 @@ export default class View {
     public deleteBlock(block: PIXI.Sprite): void {
         const index = this._blocksSprite.indexOf(block); //отримуємо індекс елемента
         this._blocksSprite.splice(index,1); //видпляємо елемент з масиву
-        const text: PIXI.Text = this.createTextScore(block); //створюємо текст балів
-        this._scoreText.push(text);
+        this.deleteSprite(block);
     }
     //малюємо ігрове поле
     private renderPlayField(): void {
-        let nameBonuses: string[] = this._model.getState().nameBonuses;
         this.app.stage.addChild(this._appGame); // малюємо беграунд
         this.renderElementsField(this._blocksSprite); // малюємо блоки
-        this.renderBonuses(this._bonusSprite, nameBonuses); // малюємо бонуси
+        this.renderBonuses(this._bonusSprite);
         this.app.stage.addChild(this._platform);    // малюємо платформу
         this.app.stage.addChild(this._ball);    // малюємо кульку
     }
@@ -181,48 +175,85 @@ export default class View {
         }
     }
     //малюємо елементи, в масиві
-    private renderBonuses(bonuses: PIXI.Sprite[], nameBonuses: string[]): void {
-        for (let i = 0; i < nameBonuses.length; i++) {
-            for (let j = 0; j < bonuses.length; j++) {
-                if (bonuses[j].name == nameBonuses[i]) {
-                    this.app.stage.addChild(bonuses[j]);
-                } else {
-                    this.app.stage.removeChild(bonuses[j]);
-                }
-            }
+    private renderBonuses(bonuses: PIXI.Sprite[]): void {
+        for (let j = 0; j < bonuses.length; j++) {
+            this.app.stage.addChild(bonuses[j]);
+            this.alphaSpriteOff(bonuses[j]);
         }
     }
     //малюємо текст балів
     private renderScoreText(text: PIXI.Text): void {
         this.app.stage.addChild(text);
+        text.alpha = 0;
     }
-    //------------------- renderTWEEN ---------------------//
-    //рухаємо текст балів
-    public moveTS(text: PIXI.Text[]): void {
-        for (let i = 0; i < text.length; i++) {
-            this.moveTextScore(text[i]);
+    //------------------- alphaSprite ---------------------//
+    private alphaSpriteOff(sprite: PIXI.Sprite): void {
+        sprite.alpha = 0;
+    }
+    private alphaSpriteOn(sprite: PIXI.Sprite, bonusSprite: PIXI.Sprite[]): void {
+        for (let i = 0; i < bonusSprite.length; i++) {
+                const nameBonus = bonusSprite[i].name.split('_');
+                const nameBlock = sprite.name.split('_');
+                if (nameBonus[nameBonus.length - 1] == nameBlock[nameBlock.length - 1] &&
+                    nameBonus[nameBonus.length - 2] == nameBlock[nameBlock.length - 2]) {
+                    bonusSprite[i].alpha = 1;
+            }
         }
     }
-    //НЕДОГАНЯЮ ДЕ ВИКЛИКАТИ ДЛЯ КОРРЕКТНОЇ РОБОТИ....
+    //------------------- deleteSprite ---------------------//
+    private deleteSprite(sprite: PIXI.Sprite): void {
+        this.app.stage.removeChild(sprite);
+        this.alphaSpriteOn(sprite, this._bonusSprite);
+
+    }
+    public deleteBonus(nameBonus: string, bonuses: PIXI.Sprite[]): void {
+        for (let i = 0; i < bonuses.length; i++) {
+            if (bonuses[i].name == nameBonus) {
+                this.app.stage.removeChild(bonuses[i]);
+            }
+        }
+    }
+    public deleteAll(): void {
+        for (let i = 0; i < this._blocksSprite.length; i++) {
+            this.app.stage.removeChild(this._blocksSprite[i]);
+        }
+        for (let i = 0; i < this._bonusSprite.length; i++) {
+            this.app.stage.removeChild(this._bonusSprite[i]);
+        }
+        this.app.stage.removeChild(this._ball);
+        this.app.stage.removeChild(this._platform);
+        this.app.stage.removeChild(this._appGame);
+    }
+
+    //------------------- renderTWEEN ---------------------//
+    //рухаємо текст балів
+    public moveTS(text: PIXI.Text[], block: PIXI.Sprite): void {
+        let blockName = block.name.split('_');
+        for (let i = 0; i < text.length; i++) {
+            let textName = this._scoreText[i].name.split('_');
+            if (blockName[blockName.length - 1] == textName[textName.length - 1] &&
+                blockName[blockName.length - 2] == textName[textName.length - 2]) {
+                text[i].alpha = 1;
+                this.moveTextScore(text[i]);
+            }
+        }
+    }
+    //рухаємо текст вибитих блоків
     private moveTextScore(text: PIXI.Text): void {
         const from = { //від
             y: text.y,
-            alpha: 0
-        }
-        const to = {    //до
-            y: text.y + 10,
             alpha: 1
         }
-        // console.log(from.y)
-        // console.log(to.y)
+        const to = {    //до
+            y: text.y - 30,
+            alpha: 0
+        }
         let tween = new TWEEN.Tween(from);
-        tween.to(from,1000);
+        tween.to(to,600);
         tween.onUpdate(() => {
-            text.y = to.y;
+            text.y = from.y;
             if (text.y >= to.y) {
-                //console.log(1)
-                //text.alpha = from.alpha;
-                tween.stop();
+                text.alpha = from.alpha;
             }
     });
         tween.start();
