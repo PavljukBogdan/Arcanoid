@@ -121,6 +121,10 @@ export default class ViewText {
     public deleteEndScreen(app: PIXI.Application): void {
         app.stage.removeChild(this._endText);
     }
+    public deleteTextScreen(app: PIXI.Application): void {
+        app.stage.removeChild(this._textScore);
+        app.stage.removeChild(this._textLevel);
+    }
     //------------------- addText ---------------------//
     public addEndScreen(): void {
         this._startText.alpha = 0;

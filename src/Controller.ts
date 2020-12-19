@@ -43,6 +43,7 @@ export default class Controller {
         }
          if (this._gameState == GameState.gameOver) {
              this._view.deleteAll();
+             this._viewText.deleteTextScreen(this._view.app);
              this._viewText.addEndScreen(); //поки не придумав, де краще викликати...
          }
     }
@@ -123,6 +124,7 @@ export default class Controller {
                  } else if (this._gameState == GameState.gameOver) {
                     this.restart(); //перезапускаємо
                     this._view.renderMainScreen();  //малюємо ігрові елементи
+                    this._viewText.renderTextScreen(this._view.app);
                     //this._viewText.deleteEndScreen(this._view.app); //видаляємо екран закінчення
                     gameState = GameState.inGame;
                 }

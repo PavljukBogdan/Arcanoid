@@ -22,6 +22,8 @@ export default class View {
     private readonly _height: number; //висота ігрового поля
     public app: PIXI.Application; //полотно
     private _appGame: PIXI.Sprite; //беграунд
+    private _appScoreText: PIXI.Sprite;//беграунд
+    private _appPlatform: PIXI.Sprite; //беграунд
     private _blocksSprite: PIXI.Sprite[] = []; //масив ігрових блоків
     private _bonusSprite: PIXI.Sprite[] = []; //масив  блоків бонусів
     private _scoreText: PIXI.Text[] = []; //масив тексту вибитих блоків
@@ -76,7 +78,9 @@ export default class View {
     private createPlayField({playField}: TGameState): PIXI.Sprite[] {
         const blockSprite: PIXI.Sprite[] = [];
         //створюємо беграунд
-        this._appGame = this.createElementGame('./assets/BG.jpg', 0,100,560,550,'appGame');
+        this._appGame = this.createElementGame('./assets/BG.jpg', 0,0,660,550,'appGame');
+        this._appPlatform = this.createElementGame('./assets/Line.png', 0,585,14,550,'appLinePlatform');
+        this._appScoreText = this.createElementGame('./assets/Line.png', 0,0,100,550,'appLineText');
         //створюємо об'єкти рівня
         let blockY = 120;
         for (let y = playField.length - 1; y >= 0; y--) {
@@ -125,10 +129,13 @@ export default class View {
         let name = sprite.name.split('_');
         let score: number = Number(name[1]) * 10;
         const style = new PIXI.TextStyle({
-            fill: "#212121",
-            fontSize: 20,
-            stroke: "#fafafa",
-            strokeThickness: 2
+            fill: "#24707a",
+            fontFamily: "Comic Sans MS",
+            fontSize: 15,
+            fontVariant: "small-caps",
+            fontWeight: "bold",
+            stroke: "#b9bbbb",
+            strokeThickness: 1
         });
 
         const text: PIXI.Text = new PIXI.Text(`+${score}`,style);
@@ -161,6 +168,8 @@ export default class View {
         this.app.stage.addChild(this._appGame); // малюємо беграунд
         this.renderElementsField(this._blocksSprite); // малюємо блоки
         this.renderBonuses(this._bonusSprite);
+        this.app.stage.addChild(this._appPlatform);
+        this.app.stage.addChild(this._appScoreText);
         this.app.stage.addChild(this._platform);    // малюємо платформу
         this.app.stage.addChild(this._ball);    // малюємо кульку
     }
@@ -223,6 +232,8 @@ export default class View {
         this.app.stage.removeChild(this._ball);
         this.app.stage.removeChild(this._platform);
         this.app.stage.removeChild(this._appGame);
+        this.app.stage.removeChild(this._appScoreText);
+        this.app.stage.removeChild(this._appPlatform);
     }
 
     //------------------- renderTWEEN ---------------------//
@@ -245,7 +256,7 @@ export default class View {
             alpha: 1
         }
         const to = {    //до
-            y: text.y - 30,
+            y: text.y - 40,
             alpha: 0
         }
         let tween = new TWEEN.Tween(from);
