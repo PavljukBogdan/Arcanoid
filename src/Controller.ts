@@ -1,8 +1,9 @@
-import Model from "./Model"
+import Model, {TGameState} from "./Model"
 import View, {TGameElements} from "./View";
 import * as TWEEN from '@tweenjs/tween.js'
 import {GameState} from "./ColorBlock";
 import ViewText from "./ViewText";
+import PIXI from "pixi.js";
 
 export default class Controller {
 
@@ -36,15 +37,18 @@ export default class Controller {
     private update(delta: object):void {
         TWEEN.update();
          if (this._gameState == GameState.inGame) { //якщо в грі
-            const state = this._view.getElementsGame(); //отримую стан гри
+             const stateModel = this._model.getState();
+            const stateView = this._view.getElementsGame(); //отримую стан гри
             this._viewText.updateTextScreen(this._model.getState().score, this._model.getState().level); //змінюємо значення тексту
-            this.tryClearBlocks(state); //перевіряємо які блоки потрібно видалити
-            this.moveElements(state); //рухаємо елементи
+            let block = this.tryClearBlocks(stateView); //перевіряємо які блоки потрібно видалити
+             this._model.checkTheBonus(stateView,block); // перевіряємо, чи вибитий бонус
+            this.tryStateGame(stateModel,stateView); //рухаємо елементи
         }
          if (this._gameState == GameState.gameOver) {
              this._view.deleteAll();
              this._viewText.deleteTextScreen(this._view.app);
-             this._viewText.addEndScreen(); //поки не придумав, де краще викликати...
+             this._viewText.addEndScreen();
+             this._view.app.ticker.stop();
          }
     }
 
@@ -62,29 +66,58 @@ export default class Controller {
 
     //------------------- gameEvents ---------------------//
     //рухаємо платформу
-    private moveElements(state: TGameElements): void {
-        if (this._moveLeft) {
-            this._model.moveElementLeft(state.platform); //рухаємо платформу ліворуч
-            this._model.checkBoundsPlatform(state,this._ballOnPlatform); //перевіряємо чи не виходить платформа за межі
-        } else if (this._moveRight) {
-            this._model.moveElementRight(state.platform); //рухаємо платформу праворуч
-            this._model.checkBoundsPlatform(state,this._ballOnPlatform); //перевіряємо чи не виходить платформа за межі
+    private tryStateGame(stateModel: TGameState, stateView: TGameElements): void {
+        this.tryStatePlatform(stateView);
+        this.tryStateBoll(stateView);
+        this.tryStateBonuses(stateModel,stateView);
+
+    }
+    //стан бонусів
+    private tryStateBonuses(stateModel: TGameState, stateView: TGameElements): void {
+        //let moveBonus: boolean = this.tryMoveBonuses(stateModel,stateView);
+        if (this.tryMoveBonuses(stateModel,stateView)) {
+            const removeBonus: string = this._model.removeBonuses(stateView);
+            if (removeBonus) {
+                this._view.deleteBonus(removeBonus, this._view.getElementsGame().bonusSprite);
+            }
         }
+        this._model.widthPlatform(stateView.platform, this._model.getState().widthPlatform);
+    }
+    //стан кулі на платформі
+    private tryStateBoll(stateView: TGameElements): void {
         if (this._ballOnPlatform && this._moveLeft) {
-            this._model.moveElementLeft(state.ball); //рухаємо кулю ліворуч
+            this._model.moveElementLeft(stateView.ball); //рухаємо кулю ліворуч
         } else if (this._ballOnPlatform && this._moveRight) {
-            this._model.moveElementRight(state.ball); //рухаємо кулю праворуч
+            this._model.moveElementRight(stateView.ball); //рухаємо кулю праворуч
         }
         if (!this._ballOnPlatform) { //якщо кулька не на платформі
             let speedBall = this._model.getState().speedBall;
-            this._gameState = this._model.jumpInPlatform(state); //відбиваємо кулю від платформи
-            this._gameState = this._model.realiseBall(state.ball, speedBall); // рухаємо кулю
+            this._gameState = this._model.jumpInPlatform(stateView); //відбиваємо кулю від платформи
+            this._gameState = this._model.realiseBall(stateView.ball, speedBall); // рухаємо кулю
         }
-        const dellBonus: string = this._model.moveBonuses(state);
-        if (dellBonus) {
-            this._view.deleteBonus(dellBonus, this._view.getElementsGame().bonusSprite);
+    }
+    //стан платформи
+    private tryStatePlatform(stateView: TGameElements): void {
+        if (this._moveLeft) {
+            this._model.moveElementLeft(stateView.platform); //рухаємо платформу ліворуч
+            this._model.checkBoundsPlatform(stateView,this._ballOnPlatform); //перевіряємо чи не виходить платформа за межі
+        } else if (this._moveRight) {
+            this._model.moveElementRight(stateView.platform); //рухаємо платформу праворуч
+            this._model.checkBoundsPlatform(stateView,this._ballOnPlatform); //перевіряємо чи не виходить платформа за межі
         }
-        this._model.widthPlatform(state.platform, this._model.getState().widthPlatform);
+    }
+    //рухаємо бонуси
+    private tryMoveBonuses(stateModel: TGameState,stateView: TGameElements): boolean {
+        let bonuses: PIXI.Sprite[] = stateView.bonusSprite;
+        let nameBonuses: string[] = stateModel.nameBonuses;
+        for (let i = 0; i < nameBonuses.length; i++) {
+            for (let j = 0; j < bonuses.length; j++) {
+                if (nameBonuses[i] == bonuses[j].name) {
+                    this._view.gravityBonuses(bonuses[j]);
+                    return true;
+                }
+            }
+        }
     }
     //видаляємо вибиті блоки
     private tryClearBlocks(state: TGameElements): PIXI.Sprite {
@@ -96,7 +129,6 @@ export default class Controller {
             if (clearBlocks) { //при колізії
                 block = blocks[i];
                 this._view.moveTS(state.scoreText, block); //рухаємо текст рахунку
-                this._model.checkTheBonus(state,block); // перевіряємо, чи вибитий бонус
                 this._view.deleteBlock(blocks[i]); // видаляємо блок з масиву
             }
         }
@@ -122,6 +154,7 @@ export default class Controller {
                     this._viewText.deletePauseScreen(this._view.app); //видаляємо текст паузи
                     gameState = GameState.inGame;
                  } else if (this._gameState == GameState.gameOver) {
+                    this._view.app.ticker.start();
                     this.restart(); //перезапускаємо
                     this._view.renderMainScreen();  //малюємо ігрові елементи
                     this._viewText.renderTextScreen(this._view.app);

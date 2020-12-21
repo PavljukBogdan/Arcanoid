@@ -27,7 +27,6 @@ export default class Model {
     //------------------- constants ---------------------//
     private readonly COLUMN_FIELD: number = 10; //кількість стовпців на полі
     private readonly LINE_FIELD: number = 4; //кількість рядків на полі
-    private readonly VELOCITY_BONUS = 3; //швидкість бонусів
     private _velocityPlatform: number = 10; //швидкість платформи
     private _velocityBall: number = 3; //швидкість кулі
     private _velocityBallX: number = this._velocityBall;
@@ -197,24 +196,18 @@ export default class Model {
     //рух кулі
     public realiseBall(ball: PIXI.Sprite, velocity: number): GameState {
             ball.x -= (this._velocityBallX) * velocity;
-            //ball.y -= this._velocityBallY;
             ball.y -= (this._velocityBallY / 0.5) * velocity;
             return this.checkBounds(ball);
     }
-    //рух бонусів
-    private gravityBonuses(bonus: PIXI.Sprite): void {
-            bonus.y += this.VELOCITY_BONUS;
-    }
-    //запускаємо гравітацію бонусів
-    public moveBonuses(state: TGameElements): string {
+    //------------------- deleteElements ---------------------//
+    //видаляємо бонуси
+    public removeBonuses(state:TGameElements): string {
         const bonuses: PIXI.Sprite[] = state.bonusSprite;
         const platform: PIXI.Sprite = state.platform;
         let bonusName: string = '';
-        let deleteBonus
         for (let i = 0; i < this._nameBonuses.length; i++) {
             for (let j = 0; j < bonuses.length; j++) {
                 if (this._nameBonuses[i] == bonuses[j].name) {
-                    this.gravityBonuses(bonuses[j]);
                     let deleteBonus = this.catchBonus(bonuses[j], platform);
                     if (deleteBonus) {
                         bonusName = bonuses[j].name;
@@ -223,9 +216,7 @@ export default class Model {
             }
             return bonusName;
         }
-        return deleteBonus;
     }
-    //------------------- deleteElements ---------------------//
     //видаляємо блоки
     public hasCollisionBlock(ball: PIXI.Sprite, block): boolean {
         let clear: boolean = false;
@@ -303,15 +294,17 @@ export default class Model {
         return GameState.inGame
     }
     //перевіряємо, чи вибитий бонус
-    public checkTheBonus(state: TGameElements, block: PIXI.Sprite): void {
+    public checkTheBonus(state: TGameElements, block: PIXI.Sprite): boolean {
         let bonuses = state.bonusSprite;
-        if (block != null)
+        if (block != null) {
             for (let i = 0; i < bonuses.length; i++) {
                 if (block.x == bonuses[i].x &&
                     block.y == bonuses[i].y) {
                     this._nameBonuses.push(bonuses[i].name);
+                    return true;
                 }
             }
+        }
     }
     //яка сторона відбила кулю
     private leftSidePlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): boolean {

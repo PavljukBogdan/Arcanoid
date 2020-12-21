@@ -18,8 +18,9 @@ export default class View {
     private _model: Model;
 
     private _element: Element | null; //дом. елемент
-    private readonly _width: number; //ширина ігрового поля
-    private readonly _height: number; //висота ігрового поля
+    private readonly WIDTH: number; //ширина ігрового поля
+    private readonly HEIGHT: number; //висота ігрового поля
+    private readonly VELOCITY_BONUS = 3; //швидкість бонусів
     public app: PIXI.Application; //полотно
     private _appGame: PIXI.Sprite; //беграунд
     private _appScoreText: PIXI.Sprite;//беграунд
@@ -32,13 +33,13 @@ export default class View {
 
     constructor(element: Element | null, width: number, height: number, model: Model) {
         this._element = element;
-        this._width = width;
-        this._height = height;
+        this.WIDTH = width;
+        this.HEIGHT = height;
         this._model = model;
 
         this.app = new PIXI.Application({
-            width: this._width, //ширина ігрового полотна
-            height: this._height, //висота ігрового полотна
+            width: this.WIDTH, //ширина ігрового полотна
+            height: this.HEIGHT, //висота ігрового полотна
             backgroundColor: 0x111111, // колір полотна
             resolution: window.devicePixelRatio || 1,
         });
@@ -234,6 +235,10 @@ export default class View {
         this.app.stage.removeChild(this._appGame);
         this.app.stage.removeChild(this._appScoreText);
         this.app.stage.removeChild(this._appPlatform);
+    }
+    //рух бонусів
+    public gravityBonuses(bonus: PIXI.Sprite): void {
+        bonus.y += this.VELOCITY_BONUS;
     }
 
     //------------------- renderTWEEN ---------------------//
