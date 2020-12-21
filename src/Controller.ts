@@ -28,7 +28,6 @@ export default class Controller {
             this._viewText.renderStartScreen(this._view.app);
             this._viewText.renderEndScreen(this._view.app);
         }
-
         this.startTimer();
     }
 
@@ -70,7 +69,6 @@ export default class Controller {
         this.tryStatePlatform(stateView);
         this.tryStateBoll(stateView);
         this.tryStateBonuses(stateModel,stateView);
-
     }
     //стан бонусів
     private tryStateBonuses(stateModel: TGameState, stateView: TGameElements): void {
@@ -108,16 +106,24 @@ export default class Controller {
     }
     //рухаємо бонуси
     private tryMoveBonuses(stateModel: TGameState,stateView: TGameElements): boolean {
+        let moveBonus = false;
+        let nB: string[] = [];
         let bonuses: PIXI.Sprite[] = stateView.bonusSprite;
         let nameBonuses: string[] = stateModel.nameBonuses;
         for (let i = 0; i < nameBonuses.length; i++) {
             for (let j = 0; j < bonuses.length; j++) {
                 if (nameBonuses[i] == bonuses[j].name) {
-                    this._view.gravityBonuses(bonuses[j]);
-                    return true;
+                    nB.push(nameBonuses[i]);
+                }
+                for (let k = 0; k < nB.length; k++) {
+                    if (nB[k] == bonuses[j].name) {
+                        moveBonus = true;
+                        this._view.gravityBonuses(bonuses[j]);
+                    }
                 }
             }
         }
+        return moveBonus;
     }
     //видаляємо вибиті блоки
     private tryClearBlocks(state: TGameElements): PIXI.Sprite {
