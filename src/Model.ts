@@ -33,7 +33,7 @@ export default class Model {
     private _velocityBallY: number = this._velocityBall;
     //------------------- dataGame ---------------------//
     private _score: number = 0; // рахунок
-    private _levelGame: number = 2; //рівень гри
+    private _levelGame: number = 1; //рівень гри
     private _playField: TGameObject[][] = []; //грове поле
     private _nameBonuses: string [] = [];   //імена бонусів
     private _widthPlatform: number = 100; //довжина платформи
@@ -280,6 +280,7 @@ export default class Model {
     }
     //перевірка виходу кулі за межі поля
     private checkBounds(ball: PIXI.Sprite): GameState {
+        let gameState: GameState = GameState.inGame;
         if (ball.x < 0 || (ball.x + ball.width) > 550) {
             this.bumpBlockX();
         }
@@ -289,9 +290,9 @@ export default class Model {
         if ((ball.y) > 660) {
             this._numberOfKnockedOutBlocks = 0;
             this._numberOfBlocks = 0;
-            return GameState.gameOver;
+            gameState = GameState.gameOver;
         }
-        return GameState.inGame
+        return gameState;
     }
     //перевіряємо, чи вибитий бонус
     public checkTheBonus(state: TGameElements, block: PIXI.Sprite): boolean {
@@ -331,6 +332,6 @@ export default class Model {
             gameState = GameState.levelPassed;
             this._numberOfKnockedOutBlocks = 0;
         }
-        return GameState.inGame;
+        return gameState;
     }
  }

@@ -43,6 +43,9 @@ export default class Controller {
              this._model.checkTheBonus(stateView,block); // перевіряємо, чи вибитий бонус
             this.tryStateGame(stateModel,stateView); //рухаємо елементи
         }
+         if (this._gameState == GameState.levelPassed) {
+             this.levelPassed();
+         }
          if (this._gameState == GameState.gameOver) {
              this._view.deleteAll();
              this._viewText.deleteTextScreen(this._view.app);
@@ -63,6 +66,14 @@ export default class Controller {
         this._view.reset();
     }
 
+    private levelPassed(): void {
+        this._view.deleteAll();
+        this._viewText.deleteEndScreen(this._view.app);
+        this._viewText.renderNextLevelScreen(this._view.app);
+        this._viewText.deleteTextScreen(this._view.app);
+        this._viewText.addEndScreen();
+        this._view.app.ticker.stop();
+    }
     //------------------- gameEvents ---------------------//
     //рухаємо платформу
     private tryStateGame(stateModel: TGameState, stateView: TGameElements): void {
@@ -90,8 +101,12 @@ export default class Controller {
         }
         if (!this._ballOnPlatform) { //якщо кулька не на платформі
             let speedBall = this._model.getState().speedBall;
-            this._gameState = this._model.jumpInPlatform(stateView); //відбиваємо кулю від платформи
-            this._gameState = this._model.realiseBall(stateView.ball, speedBall); // рухаємо кулю
+            let gameState = this._model.realiseBall(stateView.ball, speedBall); // рухаємо кулю
+            if (gameState != GameState.gameOver) {
+                this._gameState = this._gameState = this._model.jumpInPlatform(stateView); //відбиваємо кулю від платформи
+            } else {
+                this._gameState = gameState;
+            }
         }
     }
     //стан платформи
@@ -165,6 +180,12 @@ export default class Controller {
                     this._view.renderMainScreen();  //малюємо ігрові елементи
                     this._viewText.renderTextScreen(this._view.app);
                     //this._viewText.deleteEndScreen(this._view.app); //видаляємо екран закінчення
+                    gameState = GameState.inGame;
+                } else if (this._gameState == GameState.levelPassed) {
+                    this._view.app.ticker.start();
+                    this.restart(); //перезапускаємо
+                    this._view.renderMainScreen();  //малюємо ігрові елементи
+                    this._viewText.renderTextScreen(this._view.app);
                     gameState = GameState.inGame;
                 }
                 this._gameState = gameState;

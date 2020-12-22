@@ -62,7 +62,7 @@ export default class ViewText {
         this._endText.x = 120;
         this._endText.y = 300;
         this._nextLevelText = new PIXI.Text('Press Enter to next level', basicStyle);
-        this._nextLevelText.x = 120;
+        this._nextLevelText.x = 100;
         this._nextLevelText.y = 300;
     }
     //анімація тексту
@@ -120,6 +120,9 @@ export default class ViewText {
     }
     public deleteEndScreen(app: PIXI.Application): void {
         app.stage.removeChild(this._endText);
+    }
+    public deleteStartScreen(app: PIXI.Application): void {
+        app.stage.removeChild(this._startText);
     }
     public deleteTextScreen(app: PIXI.Application): void {
         app.stage.removeChild(this._textScore);
