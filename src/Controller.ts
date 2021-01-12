@@ -26,7 +26,6 @@ export default class Controller {
 
         if (this._gameState == GameState.createGame) {
             this._viewText.renderStartScreen(this._view.app);
-            this._viewText.renderEndScreen(this._view.app);
         }
         this.startTimer();
     }
@@ -44,13 +43,24 @@ export default class Controller {
             this.tryStateGame(stateModel,stateView); //рухаємо елементи
         }
          if (this._gameState == GameState.levelPassed) {
-             this.levelPassed();
+             //this.levelPassed();
+             this._view.deleteAll();
+             this._viewText.addEndScreen();
+             this._viewText.deleteEndScreen(this._view.app);
+             this._viewText.deleteTextScreen(this._view.app);
+             this._viewText.renderNextLevelScreen(this._view.app);
+
+             this._gameState = GameState.waitNextLevel;
+         } else if (this._gameState == GameState.waitNextLevel) {
+             this._view.app.ticker.stop();
          }
          if (this._gameState == GameState.gameOver) {
+             this._viewText.renderEndScreen(this._view.app);
+             this._gameState = GameState.waitGameOver;
+         } else if (this._gameState == GameState.waitGameOver) {
              this._view.deleteAll();
              this._viewText.deleteTextScreen(this._view.app);
              this._viewText.addEndScreen();
-             this._view.app.ticker.stop();
          }
     }
 
@@ -58,7 +68,13 @@ export default class Controller {
         this._view.app.ticker.add(delta => this.update(delta));
     }
 
+    private stopTimer(): void {
+        this._view.app.ticker.stop();
+    }
+
     private restart() {
+        this._viewText.deleteStartScreen(this._view.app);
+        this._viewText.deleteEndScreen(this._view.app); //видаляємо екран закінчення
         this._ballOnPlatform = true;
         this._moveLeft = false;
         this._moveRight = false;
@@ -101,7 +117,8 @@ export default class Controller {
         }
         if (!this._ballOnPlatform) { //якщо кулька не на платформі
             let speedBall = this._model.getState().speedBall;
-            let gameState = this._model.realiseBall(stateView.ball, speedBall); // рухаємо кулю
+            let trajectoryBall = this._model.getState().trajectoryBall;
+            let gameState = this._model.realiseBall(stateView.ball, speedBall, trajectoryBall); // рухаємо кулю
             if (gameState != GameState.gameOver) {
                 this._gameState = this._gameState = this._model.jumpInPlatform(stateView); //відбиваємо кулю від платформи
             } else {
@@ -172,16 +189,16 @@ export default class Controller {
                     this._viewText.renderPauseScreen(this._view.app); //малюємо текс паузи
                     gameState = GameState.pauseGame;
                  } else if (this._gameState == GameState.pauseGame) {
+                    this._viewText.deleteNextLevelScreen(this._view.app);
                     this._viewText.deletePauseScreen(this._view.app); //видаляємо текст паузи
                     gameState = GameState.inGame;
-                 } else if (this._gameState == GameState.gameOver) {
+                 } else if (this._gameState == GameState.waitGameOver) {
                     this._view.app.ticker.start();
                     this.restart(); //перезапускаємо
                     this._view.renderMainScreen();  //малюємо ігрові елементи
                     this._viewText.renderTextScreen(this._view.app);
-                    //this._viewText.deleteEndScreen(this._view.app); //видаляємо екран закінчення
                     gameState = GameState.inGame;
-                } else if (this._gameState == GameState.levelPassed) {
+                } else if (this._gameState == GameState.waitNextLevel) {
                     this._view.app.ticker.start();
                     this.restart(); //перезапускаємо
                     this._view.renderMainScreen();  //малюємо ігрові елементи

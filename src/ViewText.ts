@@ -107,6 +107,7 @@ export default class ViewText {
     //малюємо екран закінчення
     public renderEndScreen(app: PIXI.Application): void {
         app.stage.addChild(this._endText);
+        this.textAnimation(this._endText);
         this._endText.alpha = 0;
     }
     //малюємо текст наступного рівня
@@ -128,10 +129,12 @@ export default class ViewText {
         app.stage.removeChild(this._textScore);
         app.stage.removeChild(this._textLevel);
     }
+    public deleteNextLevelScreen(app: PIXI.Application): void {
+        app.stage.removeChild(this._nextLevelText);
+    }
     //------------------- addText ---------------------//
     public addEndScreen(): void {
         this._startText.alpha = 0;
         this._endText.alpha = 1;
-        //this.textAnimation(this._endText);
     }
 }

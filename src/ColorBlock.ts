@@ -18,6 +18,8 @@ export enum GameState {
     'createGame',
     'inGame',
     'pauseGame',
+    'waitGameOver',
     'gameOver',
-    'levelPassed'
+    'levelPassed',
+    'waitNextLevel'
 }

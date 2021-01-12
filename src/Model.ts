@@ -18,6 +18,7 @@ export type TGameState = {
     playField: TGameObject[][],
     widthPlatform: number,
     speedBall: number,
+    trajectoryBall: number,
     nameBonuses: string[],
     score: number,
     level: number
@@ -40,6 +41,7 @@ export default class Model {
     private _speedBall: number = 1; //швидкість кулі
     private _numberOfBlocks: number = 0; //кількість блоків в рівні
     private _numberOfKnockedOutBlocks: number = 0;
+    private _trajectoryBall = 0.5;
 
     constructor() {
         this.reset();
@@ -51,6 +53,7 @@ export default class Model {
             playField: this._playField,
             widthPlatform: this._widthPlatform,
             speedBall: this._speedBall,
+            trajectoryBall: this._trajectoryBall,
             nameBonuses: this._nameBonuses,
             score: this._score,
             level: this._levelGame
@@ -67,6 +70,7 @@ export default class Model {
         this._velocityBall = 3; //швидкість кулі
         this._velocityBallX = this._velocityBall;
         this._velocityBallY = this._velocityBall;
+        this._trajectoryBall = 0.5;
     }
 
     //------------------- createObject ---------------------//
@@ -171,13 +175,14 @@ export default class Model {
     public jumpInPlatform({platform, ball}: TGameElements): GameState {
         const gameState = this.levelApp();
         if (this.hasCollision(ball, platform)) {
+            this.directionBallRelativelyPlatform(ball,platform);
             if (this.leftSidePlatform(ball,platform)) {
-                this.bumpBlockY();
+                this._velocityBallY = Math.abs(this._velocityBallY);
                 if (this._velocityBallX < 0) {
                     this.bumpBlockX();
                 }
             } else {
-                this.bumpBlockY();
+                this._velocityBallY = Math.abs(this._velocityBallY);
                 if (this._velocityBallX > 0) {
                     this.bumpBlockX();
                 }
@@ -194,9 +199,9 @@ export default class Model {
         this._velocityBallY *= -1;
     }
     //рух кулі
-    public realiseBall(ball: PIXI.Sprite, velocity: number): GameState {
+    public realiseBall(ball: PIXI.Sprite, velocity: number, trajectoryBall: number): GameState {
             ball.x -= (this._velocityBallX) * velocity;
-            ball.y -= (this._velocityBallY / 0.5) * velocity;
+            ball.y -= (this._velocityBallY / trajectoryBall) * velocity;
             return this.checkBounds(ball);
     }
     //------------------- deleteElements ---------------------//
@@ -312,6 +317,18 @@ export default class Model {
         return (ball.x + ball.width / 2) < (platform.x + platform.width / 2);
     }
     //зміна кута кулі
+    private directionBallRelativelyPlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): void {
+
+        let brinkLeft: number = platform.x + (platform.width / 4);
+        let brinkRight: number = platform.x + ((platform.width / 4) * 3);
+        let middleBall: number = ball.x + (ball.width / 2);
+
+        if (brinkLeft < middleBall && middleBall < brinkRight) {
+            this._trajectoryBall = 0.5;
+        } else {
+            this._trajectoryBall = 1;
+        }
+    }
     //ловимо бонус
     private catchBonus(bonus: PIXI.Sprite, platform: PIXI.Sprite): boolean {
         let deleteBonusSprite = false;
