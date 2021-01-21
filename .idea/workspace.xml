@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cacbe656-94e0-47b3-b1ae-64f987aec34c" name="Default Changelist" comment="debugging Controller? tryMoveBonuses">
+      <change beforePath="$PROJECT_DIR$/src/Model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/View.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/View.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="HTML File" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1kQkChJDCmWCm2BjdM1784ML9is" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Match_3" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="ts.external.directory.path" value="E:\Typescript project\Arcanoid\node_modules\typescript\lib" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Arcanoid\assets" />
+      <recent name="E:\Arcanoid\dist" />
+      <recent name="E:\Arcanoid\src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.start">
+    <configuration name="Unnamed" type="JavascriptDebugType" nameIsGenerated="true" uri="http://localhost:63342/arcanoid/dist/" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start-serv" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start-serv" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="webpack watch" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="webpack watch" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="webpack wotch" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="webpack wotch" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.Unnamed" />
+      <item itemvalue="npm.build" />
+      <item itemvalue="npm.start" />
+      <item itemvalue="npm.start-serv" />
+      <item itemvalue="npm.webpack watch" />
+      <item itemvalue="npm.webpack wotch" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.start-serv" />
+        <item itemvalue="npm.webpack watch" />
+        <item itemvalue="npm.webpack wotch" />
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cacbe656-94e0-47b3-b1ae-64f987aec34c" name="Default Changelist" comment="" />
+      <created>1605640076766</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605640076766</updated>
+      <workItem from="1605640077806" duration="6935000" />
+      <workItem from="1605684845901" duration="3868000" />
+      <workItem from="1605794244442" duration="16698000" />
+      <workItem from="1605856941505" duration="20863000" />
+      <workItem from="1605946912917" duration="3286000" />
+      <workItem from="1605985121806" duration="14460000" />
+      <workItem from="1606149641721" duration="12779000" />
+      <workItem from="1606324168728" duration="13168000" />
+      <workItem from="1606414655466" duration="7705000" />
+      <workItem from="1606554174092" duration="21749000" />
+      <workItem from="1606602440058" duration="2178000" />
+      <workItem from="1606652217032" duration="711000" />
+      <workItem from="1606664959497" duration="616000" />
+      <workItem from="1606762161616" duration="8617000" />
+      <workItem from="1606843082154" duration="12846000" />
+      <workItem from="1606934466576" duration="13429000" />
+      <workItem from="1607016656513" duration="16239000" />
+      <workItem from="1607106052755" duration="7239000" />
+      <workItem from="1607359188512" duration="2807000" />
+      <workItem from="1607455932353" duration="10785000" />
+      <workItem from="1607536765279" duration="5305000" />
+      <workItem from="1607629334447" duration="4679000" />
+      <workItem from="1607972340107" duration="11381000" />
+      <workItem from="1608060795284" duration="9794000" />
+      <workItem from="1608141202601" duration="15231000" />
+      <workItem from="1608232336248" duration="8721000" />
+      <workItem from="1608365790260" duration="13523000" />
+      <workItem from="1608573544852" duration="12688000" />
+      <workItem from="1608665600892" duration="6086000" />
+      <workItem from="1608992392859" duration="1254000" />
+      <workItem from="1609060652950" duration="18726000" />
+      <workItem from="1609578864948" duration="5323000" />
+      <workItem from="1609656612246" duration="7575000" />
+      <workItem from="1610470375253" duration="2271000" />
+      <workItem from="1610562718793" duration="178000" />
+      <workItem from="1610651691480" duration="312000" />
+      <workItem from="1610655006036" duration="687000" />
+      <workItem from="1610822297566" duration="70000" />
+      <workItem from="1610823054672" duration="8546000" />
+      <workItem from="1610841603211" duration="52000" />
+      <workItem from="1610874254965" duration="11515000" />
+      <workItem from="1610920359561" duration="9000" />
+      <workItem from="1610992812985" duration="724000" />
+      <workItem from="1611075707692" duration="3740000" />
+      <workItem from="1611162608190" duration="639000" />
+      <workItem from="1611247949855" duration="650000" />
+    </task>
+    <task id="LOCAL-00001" summary="changed classes: Controller.ts, Model.ts, View.ts">
+      <created>1606166655330</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1606166655330</updated>
+    </task>
+    <task id="LOCAL-00002" summary="refactor classes: Controller.ts, Model.ts, View.ts">
+      <created>1606341677756</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1606341677756</updated>
+    </task>
+    <task id="LOCAL-00003" summary="refactor classes: Controller.ts, Model.ts, View.ts">
+      <created>1606652289683</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1606652289683</updated>
+    </task>
+    <task id="LOCAL-00004" summary="refactor classes: Controller.ts, Model.ts, View.ts">
+      <created>1606770298961</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1606770298961</updated>
+    </task>
+    <task id="LOCAL-00005" summary="refactor classes: Controller.ts, Model.ts, View.ts">
+      <created>1607017088287</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1607017088287</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add Bonuses">
+      <created>1607032238943</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1607032238943</updated>
+    </task>
+    <task id="LOCAL-00007" summary="add scoreText">
+      <created>1607117254776</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1607117254777</updated>
+    </task>
+    <task id="LOCAL-00008" summary="png">
+      <created>1607365523487</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1607365523487</updated>
+    </task>
+    <task id="LOCAL-00009" summary="refactor madel and view">
+      <created>1607465557079</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1607465557079</updated>
+    </task>
+    <task id="LOCAL-00010" summary="refactor madel and view">
+      <created>1607466701948</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1607466701948</updated>
+    </task>
+    <task id="LOCAL-00011" summary="refactor madel, controller and view">
+      <created>1608070671447</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1608070671447</updated>
+    </task>
+    <task id="LOCAL-00012" summary="refactor madel, controller and view">
+      <created>1608236430605</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1608236430605</updated>
+    </task>
+    <task id="LOCAL-00013" summary="refactor madel, controller, view and viewText.">
+      <created>1608376303144</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1608376303144</updated>
+    </task>
+    <task id="LOCAL-00014" summary="refactor madel, controller, view.">
+      <created>1608378853420</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1608378853420</updated>
+    </task>
+    <task id="LOCAL-00015" summary="refactor madel, controller, view.">
+      <created>1608584629559</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1608584629559</updated>
+    </task>
+    <task id="LOCAL-00016" summary="debugging Controller? tryMoveBonuses">
+      <created>1608586898491</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1608586898491</updated>
+    </task>
+    <task id="LOCAL-00017" summary="debugging Controller? tryMoveBonuses">
+      <created>1608671177081</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1608671177081</updated>
+    </task>
+    <task id="LOCAL-00018" summary="edited Conyroller, Model, View">
+      <created>1610470478970</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1610470478970</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="changed classes: Controller.ts, Model.ts, View.ts" />
+    <MESSAGE value="refactor classes: Controller.ts, Model.ts, View.ts" />
+    <MESSAGE value="add Bonuses" />
+    <MESSAGE value="add scoreText" />
+    <MESSAGE value="png" />
+    <MESSAGE value="refactor madel and view" />
+    <MESSAGE value="refactor madel, controller and view" />
+    <MESSAGE value="refactor madel, controller, view and viewText." />
+    <MESSAGE value="refactor madel, controller, view." />
+    <MESSAGE value="debugging Controller? tryMoveBonuses" />
+    <MESSAGE value="edited Conyroller, Model, View" />
+    <option name="LAST_COMMIT_MESSAGE" value="edited Conyroller, Model, View" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="190" y="187" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1605809205787">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="190" y="187" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605809205787" />
+    <state x="736" y="321" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1607541388359">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="736" y="321" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1607541388359" />
+    <state x="765" y="235" key="#com.intellij.ide.util.MemberChooser" timestamp="1605887803702">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605887803702" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1607118419554">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1607118419554" />
+    <state x="1326" y="369" key="FileChooserDialogImpl" timestamp="1611248001597">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1608064284102" />
+    <state x="1326" y="369" key="FileChooserDialogImpl/0.0.3440.1400@0.0.3440.1400" timestamp="1611248001597" />
+    <state x="838" y="417" width="525" height="205" key="Github.ShareDialog" timestamp="1606150006538">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="838" y="417" width="525" height="205" key="Github.ShareDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606150006538" />
+    <state x="818" y="224" width="415" height="692" key="Github.UntrackedFilesDialog" timestamp="1606150162311">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="818" y="224" width="415" height="692" key="Github.UntrackedFilesDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606150162311" />
+    <state width="845" height="295" key="GridCell.Tab.0.bottom" timestamp="1610920332032">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="947" height="208" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1610492108804" />
+    <state width="947" height="208" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1609585399579" />
+    <state width="845" height="295" key="GridCell.Tab.0.bottom/0.0.3440.1400@0.0.3440.1400" timestamp="1610920332032" />
+    <state width="845" height="295" key="GridCell.Tab.0.center" timestamp="1610920332032">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="947" height="208" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1610492108804" />
+    <state width="947" height="208" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1609585399579" />
+    <state width="845" height="295" key="GridCell.Tab.0.center/0.0.3440.1400@0.0.3440.1400" timestamp="1610920332032" />
+    <state width="845" height="295" key="GridCell.Tab.0.left" timestamp="1610920332032">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="947" height="208" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1610492108804" />
+    <state width="947" height="208" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1609585399579" />
+    <state width="845" height="295" key="GridCell.Tab.0.left/0.0.3440.1400@0.0.3440.1400" timestamp="1610920332032" />
+    <state width="845" height="295" key="GridCell.Tab.0.right" timestamp="1610920332032">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="947" height="208" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1610492108804" />
+    <state width="947" height="208" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1609585399579" />
+    <state width="845" height="295" key="GridCell.Tab.0.right/0.0.3440.1400@0.0.3440.1400" timestamp="1610920332032" />
+    <state width="938" height="350" key="GridCell.Tab.1.bottom" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.1.center" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.1.left" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.1.right" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.2.bottom" timestamp="1605819614456">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.2.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614456" />
+    <state width="938" height="350" key="GridCell.Tab.2.center" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.2.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.2.left" timestamp="1605819614454">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.2.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614454" />
+    <state width="938" height="350" key="GridCell.Tab.2.right" timestamp="1605819614455">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.2.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614455" />
+    <state width="938" height="350" key="GridCell.Tab.3.bottom" timestamp="1605819614457">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.3.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614457" />
+    <state width="938" height="350" key="GridCell.Tab.3.center" timestamp="1605819614456">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.3.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614456" />
+    <state width="938" height="350" key="GridCell.Tab.3.left" timestamp="1605819614456">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.3.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614456" />
+    <state width="938" height="350" key="GridCell.Tab.3.right" timestamp="1605819614457">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="938" height="350" key="GridCell.Tab.3.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605819614457" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1606149912291">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606149912291" />
+    <state x="-1368" y="252" key="Vcs.Push.Dialog.v2" timestamp="1610470486626">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1368" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1610470486626" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1608671180381" />
+    <state x="-1662" y="133" width="1678" height="790" key="dock-window-1" timestamp="1608375322425">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1662" y="133" width="1678" height="790" key="dock-window-1/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1608375322425" />
+    <state x="-1883" y="96" width="1678" height="790" key="dock-window-2" timestamp="1608375322425">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1883" y="96" width="1678" height="790" key="dock-window-2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1608375322425" />
+    <state x="84" y="77" width="1677" height="790" key="dock-window-3" timestamp="1606333259965">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="84" y="77" width="1677" height="790" key="dock-window-3/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606333259965" />
+    <state x="733" y="393" width="611" height="282" key="org.intellij.images.editor.actions.BackgroundImageDialog" timestamp="1605806395555">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="733" y="393" width="611" height="282" key="org.intellij.images.editor.actions.BackgroundImageDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605806395555" />
+    <state x="616" y="240" key="run.anything.popup" timestamp="1607976219391">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1607976219391" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1608239395264">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1608239395264" />
+  </component>
+</project>
