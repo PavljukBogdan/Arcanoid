@@ -241,7 +241,7 @@ export default class View {
         bonus.y += this.VELOCITY_BONUS;
     }
 
-    //------------------- renderTWEEN ---------------------//
+
     //рухаємо текст балів
     public moveTS(text: PIXI.Text[], block: PIXI.Sprite): void {
         let blockName = block.name.split('_');

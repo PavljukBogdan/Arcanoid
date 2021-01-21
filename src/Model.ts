@@ -34,7 +34,7 @@ export default class Model {
     private _velocityBallY: number = this._velocityBall;
     //------------------- dataGame ---------------------//
     private _score: number = 0; // рахунок
-    private _levelGame: number = 1; //рівень гри
+    private _levelGame: number = 2; //рівень гри
     private _playField: TGameObject[][] = []; //грове поле
     private _nameBonuses: string [] = [];   //імена бонусів
     private _widthPlatform: number = 100; //довжина платформи
@@ -318,15 +318,22 @@ export default class Model {
     }
     //зміна кута кулі
     private directionBallRelativelyPlatform(ball: PIXI.Sprite, platform: PIXI.Sprite): void {
+        
+        const current: number =  ball.x - platform.x + ball.width / 2;
+        const all: number = platform.width;
+        const val = Math.abs(current - all / 2);
+        const maxSpeed = 5;
+        const percent = val * maxSpeed / all;
 
-        let brinkLeft: number = platform.x + (platform.width / 4);
-        let brinkRight: number = platform.x + ((platform.width / 4) * 3);
-        let middleBall: number = ball.x + (ball.width / 2);
-
-        if (brinkLeft < middleBall && middleBall < brinkRight) {
-            this._trajectoryBall = 0.5;
+        if (this._velocityBallY < 0) {
+            this._velocityBallY = maxSpeed - percent;
         } else {
-            this._trajectoryBall = 1;
+            this._velocityBallY = -(maxSpeed - percent)
+        }
+        if (this._velocityBallX < 0) {
+            this._velocityBallX = -(maxSpeed + percent) + this._velocityBall
+        } else {
+            this._velocityBallX = (maxSpeed + percent) - this._velocityBall;
         }
     }
     //ловимо бонус
